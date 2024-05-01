@@ -12,17 +12,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     chromosome.cpp \
+    jsonparser.cpp \
     main.cpp \
-    methodgraph.cpp \
     methodinfo.cpp \
     population.cpp \
+    testcasedecor.cpp \
     unittestgenerator.cpp
 
 HEADERS += \
     chromosome.h \
-    methodgraph.h \
+    jsonparser.h \
     methodinfo.h \
     population.h \
+    testcasedecor.h \
     unittestgenerator.h
 
 FORMS += \
@@ -32,3 +34,7 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    ../build-UnitTestGenerator-Desktop_Qt_5_12_12_MinGW_64_bit-Debug/debug/text.json \
+    ../build-UnitTestGenerator-Desktop_Qt_5_12_12_MinGW_64_bit-Debug/text.json

@@ -6,8 +6,8 @@
 #include <QList>
 #include <QDebug>
 #include <chromosome.h>
-#include <methodgraph.h>
 #include <methodinfo.h>
+#include <jsonparser.h>
 
 /*!
  * \brief Набор тест-кейсов (популяция)
@@ -58,13 +58,16 @@ public:
      * \brief Оператор выбора родителей (выбран аутбридинг)
      * \return Пара родителей, к которым будет применен оператор скрещивания
      */
-    QPair<Chromosome*, Chromosome*> outbreeding();
+    QPair<AbstractChromosome*, AbstractChromosome*> outbreeding();
+
+    /*!
+     * \brief Проверить условие останова
+     * \return Решение: продолжить исполнение алгоритма или выйти
+     */
+    bool checkStopCondition();
 
     void setPopulationSize(int populationSize) { this->populationSize = populationSize; }
     int getPopulationSize() { return populationSize; }
-
-    void setListMethodInfo(QList<MethodInfo*> list) { this->listMethodInfo = list; }
-    void setMethodGraph(MethodGraph* methodGraph) {this->methodGraph = methodGraph; }
 
     void printMethodInfo();
     void printChromosome();
@@ -75,17 +78,17 @@ private:
     /*!
      * \brief Текущий набор хромосом в популяции
      */
-    QList<Chromosome*> currentListChromosome;
+    QList<AbstractChromosome*> currentListChromosome;
 
     /*!
      * \brief Временный список с хромосомами
      */
-    QList<Chromosome*> tempListChromosome;
+    QList<AbstractChromosome*> tempListChromosome;
 
     /*!
      * \brief Новый набор хромосом в популяции
      */
-    QList<Chromosome*> newListChromosome;
+    QList<AbstractChromosome*> newListChromosome;
 
     /*!
      * \brief Вероятность мутации = 0.02
@@ -107,9 +110,8 @@ private:
      */
     int populationSize;
 
-    QList<MethodInfo*> listMethodInfo;
+    QList<GeneralInfo*> listGeneralInfo;
 
-    MethodGraph* methodGraph;
 
     /*!
      * \brief Среднее значение функции пригодности в популяции

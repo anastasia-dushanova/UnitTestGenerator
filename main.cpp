@@ -4,6 +4,7 @@
 #include <QDebug>
 //#include <chromosome.h>
 #include <population.h>
+#include <testcasedecor.h>
 
 int main(int argc, char *argv[])
 {
@@ -14,17 +15,29 @@ int main(int argc, char *argv[])
 
 //    Chromosome ch;
 
-    Population* pop = new Population();
-    pop->initMethodInfo(19);
+//    Population* pop = new Population();
+//    pop->initMethodInfo(5);
 //    pop->printMethodInfo();
-    pop->initPopulation();
+//    pop->initPopulation();
 //    pop->printChromosome();
-    pop->avgFitnessCalculation();
-    pop->operatorSelection();
-    pop->operatorCrossover();
-    pop->operatorMutation();
-    pop->operatorReduction();
-    pop->avgFitnessCalculation();
+//    int i{0};
+//    while(pop->checkStopCondition() == false){
+//        qDebug() << "\nИТЕРАЦИЯ № "<<i++;
+//        pop->fitnessCalculation();
+//        pop->operatorSelection();
+//        pop->operatorCrossover();
+//        pop->operatorMutation();
+//        pop->operatorReduction();
+//        pop->fitnessCalculation();
+//        pop->avgFitnessCalculation();
+//        pop->printChromosome();
+//    }
 
+//    pop->printChromosome();
+
+    TestCaseDecor* decor = new TestCaseDecor("decor.txt");
+    decor->decor();
+
+    delete  decor;
     return a.exec();
 }

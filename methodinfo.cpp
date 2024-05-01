@@ -1,6 +1,6 @@
 #include "methodinfo.h"
 
-MethodInfo::MethodInfo() { }
+GeneralInfo::GeneralInfo() { }
 
-MethodInfo::MethodInfo(QString method, size_t args, int type, bool returnValue)
-    :method(method), args(args), type(type), returnValue(returnValue) { }
+GeneralInfo::GeneralInfo(ClassInfo classInfo, Method method)
+    :classInfo(classInfo), method(method) { }

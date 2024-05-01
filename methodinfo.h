@@ -2,34 +2,35 @@
 #define METHODINFO_H
 
 #include <QString>
+#include <QStringList>
+#include <chromosome.h>
 
-class MethodInfo
+class GeneralInfo
 {
 
 public:
-    MethodInfo();
-    MethodInfo(QString method, size_t args, int type, bool returnValue);
-    ~MethodInfo() {}
+    GeneralInfo();
+    GeneralInfo(ClassInfo className, Method method);
+    ~GeneralInfo() {}
 
-    void setMethodInfo(QString method, size_t args, int type, bool returnValue);
+    ClassInfo getClassInfo() { return classInfo; }
+    void setClassInfo(ClassInfo className) { this->classInfo = className; }
 
-    void setMethod(QString method) { this->method = method; }
-    QString getMethod() { return method; }
+    void setMethod(Method method) { this->method = method; }
+    Method getMethod() { return method; }
 
-    void setArgs(size_t args) { this->args = args; }
-    size_t getArgs() { return args; }
+    void setGlobalFields(QStringList globalFields) { this->globalFields = globalFields; }
+    QStringList getGbobalFields() { return globalFields; }
 
-    void setType(int type) { this->type = type; }
-    int getType() { return type; }
-
-    void setReturnValue(bool returnValue) { this->returnValue = returnValue; }
-    bool getReturnValue() { return returnValue; }
+    void setOtherClasses(QStringList otherClasses) { this->otherClasses = otherClasses; }
+    QStringList getOtherClasses() { return otherClasses; }
 
 private:
-    QString method;
-    size_t args;
-    int type;
-    bool returnValue;
+    ClassInfo classInfo;
+    Method method;
+    QStringList globalFields;
+    QStringList otherClasses;
+
 };
 
 #endif // METHODINFO_H
