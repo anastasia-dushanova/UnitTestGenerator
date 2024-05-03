@@ -1,0 +1,51 @@
+[
+{
+    "class": {
+        "fields": [
+            "field1"
+        ],
+        "method": {
+            "args": [
+                "arg_1",
+                "arg_2"
+            ],
+            "linesCount": 123,
+            "name": "method_12",
+            "retVal": false
+        },
+        "name": "class_21"
+    },
+    "global_fields": [
+        "gl_f_1"
+    ],
+    "other_classes": [
+        "other1"
+    ]
+}
+,
+{
+    "class": {
+        "fields": [
+            "field1"
+        ],
+        "method": {
+            "args": [
+                "arg_1",
+                "arg_2",
+                "arg_3"
+            ],
+            "linesCount": 123,
+            "name": "method_13",
+            "retVal": false
+        },
+        "name": "class_21"
+    },
+    "global_fields": [
+        "gl_f_1"
+    ],
+    "other_classes": [
+        "other1"
+    ]
+}
+
+]

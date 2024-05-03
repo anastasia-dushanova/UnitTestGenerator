@@ -2,14 +2,7 @@
 
 TestCaseDecor::TestCaseDecor() : listTestCase(QList<AbstractChromosome*>()), fileName(""){ }
 
-TestCaseDecor::TestCaseDecor(const QString fileName) : listTestCase(QList<AbstractChromosome*>()), fileName(fileName) {
-
-    ChromosomeReturningFunc* ch = new ChromosomeReturningFunc();
-    ch->setChromosome(ClassInfo("class_1", QStringList() << "field1"<<"field2"),
-                      Method("method_1", QStringList() << "arg_1", 23, true));
-
-    listTestCase.append(ch);
-}
+TestCaseDecor::TestCaseDecor(const QString fileName) : listTestCase(QList<AbstractChromosome*>()), fileName(fileName) { }
 
 TestCaseDecor::~TestCaseDecor() { }
 
@@ -31,26 +24,34 @@ void TestCaseDecor::decor(){
     if(!file.open(QIODevice::WriteOnly | QIODevice::Append)){
         qDebug() << "Не удалось открыть файл";
         return;
-    }
+    }else{
+        file.resize(0);
+        QByteArray array;
+        QTextStream stream(&file);
+        QString test{"\n\ndef test_case_"};
 
-    file.open(QIODevice::WriteOnly | QIODevice::Append);
-    QByteArray array;
-    QDataStream stream(&array, QIODevice::WriteOnly);
-    QString test{"def test_case_"};
+        for(int i{0}; i < listTestCase.size(); ++i){
 
-    for(int i{0}; i < listTestCase.size(); ++i){
+            if(listTestCase.at(i)->getMethod().getReturnValue() == true){
 
-        if(listTestCase.at(i)->getMethod().getReturnValue() == true){
+                ChromosomeReturningFunc* chrom = static_cast<ChromosomeReturningFunc*>(listTestCase.at(i));
 
-            ChromosomeReturningFunc* chrom = static_cast<ChromosomeReturningFunc*>(listTestCase.at(i));
+                stream << test+QString::number(i)+"():";
 
-            stream << test+QString::number(i);
+                for(auto ch : chrom->getGens())
+                    stream << "\n\t"+ch;
 
-            for(auto ch : chrom->getGens())
-                stream << "\n"+ch;
+            }else{
 
+                ChromosomeNonReturningFunc* chrom = static_cast<ChromosomeNonReturningFunc*>(listTestCase.at(i));
+
+                stream << test+QString::number(i)+"():";
+
+                for(auto ch : chrom->getGens())
+                    stream << "\n\t"+ch;
+            }
         }
+        file.write(array);
+        file.close();
     }
-    file.write(array);
-    file.close();
 }

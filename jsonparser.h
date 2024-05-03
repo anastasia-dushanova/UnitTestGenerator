@@ -19,7 +19,8 @@ public:
     QString getFileName() { return fileName; }
     void setFileName(const QString fileName) { this->fileName = fileName; }
 
-    QList<GeneralInfo*> parseJSON();
+    QList<GeneralInfo*> parseJSONPopulation();
+    void parseJSONCluster();
 
 private:
     QString fileName;

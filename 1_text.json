@@ -1,0 +1,76 @@
+[
+{
+    "class": {
+        "fields": [
+            "field1",
+            "field2"
+        ],
+        "method": {
+            "args": [
+                "arg_1"
+            ],
+            "linesCount": 123,
+            "name": "method_21",
+            "retVal": true
+        },
+        "name": "class_2"
+    },
+    "global_fields": [
+        "gl_f_1",
+        "gl_f_2"
+    ],
+    "other_classes": [
+        "other1"
+    ]
+}
+,
+{
+    "class": {
+        "fields": [
+            "field1",
+            "field2"
+        ],
+        "method": {
+            "args": [
+                "arg_1",
+                "arg_2"
+            ],
+            "linesCount": 123,
+            "name": "method_22",
+            "retVal": true
+        },
+        "name": "class_2"
+    },
+    "global_fields": [
+        "gl_f_1",
+        "gl_f_2"
+    ],
+    "other_classes": [
+        "other1"
+    ]
+}
+,
+{
+    "class": {
+        "fields": [
+            "field1"
+        ],
+        "method": {
+            "args": [
+                "arg_1"
+            ],
+            "linesCount": 123,
+            "name": "method_11",
+            "retVal": true
+        },
+        "name": "class_21"
+    },
+    "global_fields": [
+        "gl_f_1"
+    ],
+    "other_classes": [
+        "other1"
+    ]
+}
+
+]

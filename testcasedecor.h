@@ -5,6 +5,7 @@
 #include <QList>
 #include <QApplication>
 #include <chromosome.h>
+#include <QTextStream>
 
 class TestCaseDecor
 {

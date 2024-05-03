@@ -2,9 +2,9 @@
 
 #include <QApplication>
 #include <QDebug>
-//#include <chromosome.h>
 #include <population.h>
-#include <testcasedecor.h>
+#include <populationscontroller.h>
+#include <testcluster.h>
 
 int main(int argc, char *argv[])
 {
@@ -13,31 +13,19 @@ int main(int argc, char *argv[])
 //    UnitTestGenerator w;
 //    w.show();
 
-//    Chromosome ch;
+//    Population* pop1 = new Population(1, 12);
+//    Population* pop2 = new Population(2, 12);
 
-//    Population* pop = new Population();
-//    pop->initMethodInfo(5);
-//    pop->printMethodInfo();
-//    pop->initPopulation();
-//    pop->printChromosome();
-//    int i{0};
-//    while(pop->checkStopCondition() == false){
-//        qDebug() << "\nИТЕРАЦИЯ № "<<i++;
-//        pop->fitnessCalculation();
-//        pop->operatorSelection();
-//        pop->operatorCrossover();
-//        pop->operatorMutation();
-//        pop->operatorReduction();
-//        pop->fitnessCalculation();
-//        pop->avgFitnessCalculation();
-//        pop->printChromosome();
-//    }
+    TestCluster* cluster = new TestCluster("main.json");
+    cluster->makeClusters();
 
-//    pop->printChromosome();
+    PopulationsController* cont = new PopulationsController(12);
+//    cont->appendPopulation(pop1);
+//    cont->appendPopulation(pop2);
+//    cont->initPopulation();
 
-    TestCaseDecor* decor = new TestCaseDecor("decor.txt");
-    decor->decor();
+    cont->checkFiles();
+    cont->initPopulation();
 
-    delete  decor;
     return a.exec();
 }

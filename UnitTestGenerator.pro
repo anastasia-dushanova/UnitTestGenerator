@@ -16,7 +16,9 @@ SOURCES += \
     main.cpp \
     methodinfo.cpp \
     population.cpp \
+    populationscontroller.cpp \
     testcasedecor.cpp \
+    testcluster.cpp \
     unittestgenerator.cpp
 
 HEADERS += \
@@ -24,7 +26,9 @@ HEADERS += \
     jsonparser.h \
     methodinfo.h \
     population.h \
+    populationscontroller.h \
     testcasedecor.h \
+    testcluster.h \
     unittestgenerator.h
 
 FORMS += \
@@ -36,5 +40,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    ../build-UnitTestGenerator-Desktop_Qt_5_12_12_MinGW_64_bit-Debug/debug/text.json \
-    ../build-UnitTestGenerator-Desktop_Qt_5_12_12_MinGW_64_bit-Debug/text.json
+    ../build-UnitTestGenerator-Desktop_Qt_5_12_12_MinGW_64_bit-Debug/debug/1_text.json \
+    ../build-UnitTestGenerator-Desktop_Qt_5_12_12_MinGW_64_bit-Debug/debug/2_text.json \
+    ../build-UnitTestGenerator-Desktop_Qt_5_12_12_MinGW_64_bit-Debug/debug/3_text.json \
+    ../build-UnitTestGenerator-Desktop_Qt_5_12_12_MinGW_64_bit-Debug/debug/4_text.json \
+    ../build-UnitTestGenerator-Desktop_Qt_5_12_12_MinGW_64_bit-Debug/debug/decor.txt \
+    ../build-UnitTestGenerator-Desktop_Qt_5_12_12_MinGW_64_bit-Debug/debug/main.json
+
+

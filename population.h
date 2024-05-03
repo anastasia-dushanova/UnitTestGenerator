@@ -12,11 +12,13 @@
 /*!
  * \brief Набор тест-кейсов (популяция)
  */
-class Population
+class Population : public QObject
 {
+    Q_OBJECT
 public:
     Population();
     Population(float mut, float cross);
+    Population(int index, int total);
     ~Population();
 
     /*!
@@ -69,9 +71,21 @@ public:
     void setPopulationSize(int populationSize) { this->populationSize = populationSize; }
     int getPopulationSize() { return populationSize; }
 
-    void printMethodInfo();
+    QList<AbstractChromosome*> getCurrentList () { return currentListChromosome; }
+    void setCurrentList(QList<AbstractChromosome*> list) { this->currentListChromosome = list; }
+
+    int getNumberIterations() { return numberIteration; }
+    void setNumberIterations(int num) { this->numberIteration = num; }
+
     void printChromosome();
-    void initMethodInfo(const int size);
+    void receiveChromosomes(QList<AbstractChromosome*> list);
+    QList<AbstractChromosome*> sendChromosomes(const int count);
+
+public slots:
+    void start();
+signals:
+    void signalReadySwap();
+    void signalFinish();
 
 private:
 
@@ -112,11 +126,18 @@ private:
 
     QList<GeneralInfo*> listGeneralInfo;
 
-
     /*!
      * \brief Среднее значение функции пригодности в популяции
      */
     int avgFitnessFunc;
+
+    int numberIteration;
+
+    int totalIterations;
+
+    int currentIteration;
+
+    int index;
 
     /*!
      * \brief Список общих функций приспособленностей для все популяции

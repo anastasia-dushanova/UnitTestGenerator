@@ -185,8 +185,10 @@ public:
 
     void setChromosome(ClassInfo classInfo, Method method) override;
 
+    //TODO доделать
     void fitnessCalculation() override;
 
+    //TODO доделать
     void mutationGen() override;
 
 private:
@@ -201,8 +203,10 @@ public:
 
     void setChromosome(ClassInfo classInfo, Method method) override;
 
+    //TODO доделать
     void fitnessCalculation() override;
 
+    //TODO доделать
     void mutationGen() override;
 
 private:
