@@ -18,7 +18,7 @@ class Population : public QObject
 public:
     Population();
     Population(float mut, float cross);
-    Population(int index, int total);
+    Population(int index, int total, QString filePath);
     ~Population();
 
     /*!
@@ -138,6 +138,8 @@ private:
     int currentIteration;
 
     int index;
+
+    QString filePath;
 
     /*!
      * \brief Список общих функций приспособленностей для все популяции

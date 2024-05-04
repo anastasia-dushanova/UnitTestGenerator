@@ -1,5 +1,9 @@
 #include "chromosome.h"
 
+Method::~Method(){ }
+
+ClassInfo::~ClassInfo() { }
+
 AbstractChromosome::AbstractChromosome()
     : classInfo("", QStringList()),method(), fitness(-1), gens(), otherClasses(), globalFields() { }
 
@@ -147,38 +151,11 @@ void ChromosomeReturningFunc::setChromosome(ClassInfo classInfo, Method method){
         //если метод не содержит аргументов
         if(method.getArgs().size() == 0){
 
-            srand(time(0));
-            //если есть глобальные переменные
-            if(getGlobalFields().size() != 0){
+            int type = 1+rand()%4;
+            pair = generateRandom(type);
+            result = (type >= 4) ? pair.first : pair.second;
+            gens.append("assert "+method.getName()+"() == "+result);
 
-                //если есть дополнительные классы
-                if(getOtherClasses().size() != 0)
-                    for(int i{0}; i < getOtherClasses().size(); ++i)
-                        gens.append("obj_"+QString::number(i)+" = "+getOtherClasses().at(i)+"()");
-
-
-                int type = 1+rand()%4;
-                pair = generateRandom(type);
-                result = (type >= 4) ? pair.first : pair.second;
-                gens.append("assert "+method.getName()+"("+listArgs+") == "+result);
-            }else{
-
-                //если есть дополнительные классы
-                if(getOtherClasses().size() != 0){
-                    for(int i{0}; i < getOtherClasses().size(); ++i)
-                        gens.append("obj_"+QString::number(i)+" = "+getOtherClasses().at(i)+"()");
-
-                    int type = 1+rand()%4;
-                    pair = generateRandom(type);
-                    result = (type >= 4) ? pair.first : pair.second;
-                    gens.append("assert "+method.getName()+"("+listArgs+") == "+result);
-                }else{
-                    int type = 1+rand()%4;
-                    pair = generateRandom(type);
-                    result = (type >= 4) ? pair.first : pair.second;
-                    gens.append("assert "+method.getName()+"("+listArgs+") == "+result);
-                }
-            }
         }else{
             QStringList allArgs;
             //метод содержит аргументы
@@ -188,8 +165,7 @@ void ChromosomeReturningFunc::setChromosome(ClassInfo classInfo, Method method){
                 pair = generateRandom(type);
                 result = (type >= 4) ? pair.first : pair.second;
                 gens.append("args_"+QString::number(i)+" = " + result);
-//                listArgs += "args_"+QString::number(i)+",";
-                allArgs.append("args_"+QString::number(i)+",");
+                allArgs.append("args_"+QString::number(i));
             }
 
             listArgs.chop(1);
@@ -207,15 +183,6 @@ void ChromosomeReturningFunc::setChromosome(ClassInfo classInfo, Method method){
                 for(int i{0}; i < getGlobalFields().size(); ++i)
                     allArgs.append(getGlobalFields().at(i));
 
-                for(int i{0}; i < getMethod().getArgs().size(); ++i){
-                    int ind = 1 + rand()%allArgs.size()-1;
-                    listArgs += allArgs.takeAt(ind);
-                }
-                listArgs.chop(1);
-                int type = 1+rand()%4;
-                pair = generateRandom(type);
-                result = (type >= 4) ? pair.first : pair.second;
-                gens.append("assert "+method.getName()+"("+listArgs+") == "+result);
             }else{
 
                 //если есть дополнительные классы
@@ -228,109 +195,37 @@ void ChromosomeReturningFunc::setChromosome(ClassInfo classInfo, Method method){
                     for(int i{0}; i < getGlobalFields().size(); ++i)
                         allArgs.append(getGlobalFields().at(i));
 
-                    for(int i{0}; i < getMethod().getArgs().size(); ++i){
-                        int ind = 1 + rand()%allArgs.size()-1;
-                        listArgs += allArgs.takeAt(ind);
-                    }
-                    listArgs.chop(1);
-                    int type = 1+rand()%4;
-                    pair = generateRandom(type);
-                    result = (type >= 4) ? pair.first : pair.second;
-                    gens.append("assert "+method.getName()+"("+listArgs+") == "+result);
-                }else{
-                    for(int i{0}; i < getMethod().getArgs().size(); ++i){
-                        int ind = 1 + rand()%allArgs.size()-1;
-                        listArgs += allArgs.takeAt(ind);
-                    }
-                    listArgs.chop(1);
-                    int type = 1+rand()%4;
-                    pair = generateRandom(type);
-                    result = (type >= 4) ? pair.first : pair.second;
-                    gens.append("assert "+method.getName()+"("+listArgs+") == "+result);
                 }
+
             }
+
+            for(int i{0}; i < getMethod().getArgs().size(); ++i){
+                int ind = 1 + rand()%allArgs.size()-1;
+                listArgs += allArgs.takeAt(ind)+",";
+            }
+            listArgs.chop(1);
+
+            int type = 1+rand()%4;
+            pair = generateRandom(type);
+            result = (type >= 4) ? pair.first : pair.second;
+            gens.append("assert "+method.getName()+"("+listArgs+") == "+result);
         }
     }else{
         //Метод класса
-        srand(time(0));
         QString obj{"object_"+classInfo.getName()};
         gens.append(obj+" = "+classInfo.getName()+"()");
 
         //если метод не содержит аргументов
         if(method.getArgs().size() == 0){
 
-            //если класс не содержит полей
-            if(classInfo.getFields().size() == 0){
+            if(getOtherClasses().size() != 0)
+                for(int i{0}; i < getOtherClasses().size(); ++i)
+                    gens.prepend("obj_"+QString::number(i)+" = "+getOtherClasses().at(i)+"()");
 
-                //если есть глобальные переменные
-                if(getGlobalFields().size() != 0){
-
-                    //если есть дополнительные классы
-                    if(getOtherClasses().size() != 0)
-                        for(int i{0}; i < getOtherClasses().size(); ++i)
-                            gens.append("obj_"+QString::number(i)+" = "+getOtherClasses().at(i)+"()");
-
-
-                    int type = 1+rand()%4;
-                    pair = generateRandom(type);
-                    result = (type >= 4) ? pair.first : pair.second;
-                    gens.append("assert "+obj+"."+method.getName()+"("+listArgs+") == "+result);
-                }else{
-
-                    //если есть дополнительные классы
-                    if(getOtherClasses().size() != 0){
-                        for(int i{0}; i < getOtherClasses().size(); ++i)
-                            gens.prepend("obj_"+QString::number(i)+" = "+getOtherClasses().at(i)+"()");
-
-                        int type = 1+rand()%4;
-                        pair = generateRandom(type);
-                        result = (type >= 4) ? pair.first : pair.second;
-                        gens.append("assert "+obj+"."+method.getName()+"("+listArgs+") == "+result);
-                    }else{
-                        int type = 1+rand()%4;
-                        pair = generateRandom(type);
-                        result = (type >= 4) ? pair.first : pair.second;
-                        gens.append("assert "+obj+"."+method.getName()+"("+listArgs+") == "+result);
-                    }
-                }
-
-//                gens.insert(gens.size()-1, obj+"."+method.getName()+"()");
-            }else{
-                //Класс содержит поля
-                //если есть глобальные переменные
-                if(getGlobalFields().size() != 0){
-
-                    //если есть дополнительные классы
-                    if(getOtherClasses().size() != 0)
-                        for(int i{0}; i < getOtherClasses().size(); ++i)
-                            gens.append("obj_"+QString::number(i)+" = "+getOtherClasses().at(i)+"()");
-
-                    int type = 1+rand()%4;
-                    pair = generateRandom(type);
-                    result = (type >= 4) ? pair.first : pair.second;
-                    gens.append("assert "+obj+"."+method.getName()+"("+listArgs+") == "+result);
-                }else{
-                    //нет глобальных переменных
-                    //если есть дополнительные классы
-                    if(getOtherClasses().size() != 0){
-                        for(int i{0}; i < getOtherClasses().size(); ++i)
-                            gens.prepend("obj_"+QString::number(i)+" = "+getOtherClasses().at(i)+"()");
-
-                        int type = 1+rand()%4;
-                        pair = generateRandom(type);
-                        result = (type >= 4) ? pair.first : pair.second;
-                        gens.append("assert "+obj+"."+method.getName()+"("+listArgs+") == "+result);
-                    }else{
-                        //нет дополнительных классов
-                        int type = 1+rand()%4;
-                        pair = generateRandom(type);
-                        result = (type >= 4) ? pair.first : pair.second;
-                        gens.append("assert "+obj+"."+method.getName()+"("+listArgs+") == "+result);
-                    }
-                }
-//                gens.insert(gens.size()-1, obj+"."+method.getName()+"()");
-
-            }
+            int type = 1+rand()%4;
+            pair = generateRandom(type);
+            result = (type >= 4) ? pair.first : pair.second;
+            gens.append("assert "+obj+"."+method.getName()+"() == "+result);
 
         }else{
             QStringList allArgs;
@@ -341,10 +236,8 @@ void ChromosomeReturningFunc::setChromosome(ClassInfo classInfo, Method method){
                 pair = generateRandom(type);
                 result = (type >= 4) ? pair.first : pair.second;
                 gens.append("args_"+QString::number(i)+" = " + result);
-//                listArgs += "args_"+QString::number(i)+",";
                 allArgs.append("args_"+QString::number(i));
             }
-//            listArgs.chop(1);
             //если класс не содержит полей
             if(classInfo.getFields().size() == 0){
 
@@ -361,15 +254,6 @@ void ChromosomeReturningFunc::setChromosome(ClassInfo classInfo, Method method){
                     for(int i{0}; i < getGlobalFields().size(); ++i)
                         allArgs.append(getGlobalFields().at(i));
 
-                    for(int i{0}; i < getMethod().getArgs().size(); ++i){
-                        int ind = 1 + rand()%allArgs.size()-1;
-                        listArgs += allArgs.takeAt(ind);
-                    }
-                    listArgs.chop(1);
-                    int type = 1+rand()%4;
-                    pair = generateRandom(type);
-                    result = (type >= 4) ? pair.first : pair.second;
-                    gens.append("assert "+obj+"."+method.getName()+"("+listArgs+") == "+result);
                 }else{
 
                     //если есть дополнительные классы
@@ -379,28 +263,19 @@ void ChromosomeReturningFunc::setChromosome(ClassInfo classInfo, Method method){
                             allArgs.append("obj_"+QString::number(i));
                         }
 
-                        for(int i{0}; i < getMethod().getArgs().size(); ++i){
-                            int ind = 1 + rand()%allArgs.size()-1;
-                            listArgs += allArgs.takeAt(ind);
-                        }
-                        listArgs.chop(1);
-                        int type = 1+rand()%4;
-                        pair = generateRandom(type);
-                        result = (type >= 4) ? pair.first : pair.second;
-                        gens.append("assert "+obj+"."+method.getName()+"("+listArgs+") == "+result);
-                    }else{
-                        for(int i{0}; i < getMethod().getArgs().size(); ++i){
-                            int ind = 1 + rand()%allArgs.size()-1;
-                            listArgs += allArgs.takeAt(ind);
-                        }
-                        listArgs.chop(1);
-                        //нет дополнительных классов
-                        int type = 1+rand()%4;
-                        pair = generateRandom(type);
-                        result = (type >= 4) ? pair.first : pair.second;
-                        gens.append("assert "+obj+"."+method.getName()+"("+listArgs+") == "+result);
                     }
+
                 }
+                for(int i{0}; i < getMethod().getArgs().size(); ++i){
+                    int ind = 1 + rand()%allArgs.size()-1;
+                    listArgs += allArgs.takeAt(ind)+",";
+                }
+                listArgs.chop(1);
+
+                int type = 1+rand()%4;
+                pair = generateRandom(type);
+                result = (type >= 4) ? pair.first : pair.second;
+                gens.append("assert "+obj+"."+method.getName()+"("+listArgs+") == "+result);
 
             }else{
                 //Класс содержит поля
@@ -421,15 +296,6 @@ void ChromosomeReturningFunc::setChromosome(ClassInfo classInfo, Method method){
                     for(int i{0}; i < getGlobalFields().size(); ++i)
                         allArgs.append(getGlobalFields().at(i));
 
-                    for(int i{0}; i < getMethod().getArgs().size(); ++i){
-                        int ind = 1 + rand()%allArgs.size()-1;
-                        listArgs += allArgs.takeAt(ind);
-                    }
-                    listArgs.chop(1);
-                    int type = 1+rand()%4;
-                    pair = generateRandom(type);
-                    result = (type >= 4) ? pair.first : pair.second;
-                    gens.append("assert "+obj+"."+method.getName()+"("+listArgs+") == "+result);
                 }else{
                     //если есть дополнительные классы
                     if(getOtherClasses().size() != 0){
@@ -437,33 +303,21 @@ void ChromosomeReturningFunc::setChromosome(ClassInfo classInfo, Method method){
                             gens.prepend("obj_"+QString::number(i)+" = "+getOtherClasses().at(i)+"()");
                             allArgs.append("obj_"+QString::number(i));
                         }
-                        for(int i{0}; i < getMethod().getArgs().size(); ++i){
-                            int ind = 1 + rand()%allArgs.size()-1;
-                            listArgs += allArgs.takeAt(ind);
-                        }
-                        listArgs.chop(1);
-                        int type = 1+rand()%4;
-                        pair = generateRandom(type);
-                        result = (type >= 4) ? pair.first : pair.second;
-                        gens.append("assert "+obj+"."+method.getName()+"("+listArgs+") == "+result);
-                    }else{
-                        for(int i{0}; i < getMethod().getArgs().size(); ++i){
-                            int ind = 1 + rand()%allArgs.size()-1;
-                            listArgs += allArgs.takeAt(ind);
-                        }
-                        listArgs.chop(1);
-                        //нет дополнительных классов
-                        int type = 1+rand()%4;
-                        pair = generateRandom(type);
-                        result = (type >= 4) ? pair.first : pair.second;
-                        gens.append("assert "+obj+"."+method.getName()+"("+listArgs+") == "+result);
                     }
                 }
 
+                for(int i{0}; i < getMethod().getArgs().size(); ++i){
+                    int ind = 1 + rand()%allArgs.size()-1;
+                    listArgs += allArgs.takeAt(ind)+",";
+                }
+                listArgs.chop(1);
+
+                int type = 1+rand()%4;
+                pair = generateRandom(type);
+                result = (type >= 4) ? pair.first : pair.second;
+                gens.append("assert "+obj+"."+method.getName()+"("+listArgs+") == "+result);
             }
-
         }
-
     }
     setGens(gens);
 
@@ -641,10 +495,10 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
     QString listArgs{""};
     setClassInfo(classInfo);
     setMethod(method);
+    srand(time(0));
     //метод из глобальной области
     if(classInfo.getName().isEmpty()){
 
-        srand(time(0));
         //если метод не содержит аргументов
         if(method.getArgs().size() == 0){
 
@@ -660,9 +514,9 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                 int type = 1+rand()%4;
                 pair = generateRandom(type);
                 field = getGlobalFields().at(1 + rand()%getGlobalFields().size()-1);
-                gens.append("expected = "+pair.first);
-                gens.append(field + " = "+pair.first);
-                gens.append("assert "+field+" == expected");
+//                gens.append("expected = "+pair.first);
+//                gens.append(field + " = "+pair.first);
+//                gens.append("assert "+field+" == expected");
             }else{
 
                 //если есть дополнительные классы
@@ -673,9 +527,9 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                     int type = 1+rand()%4;
                     pair = generateRandom(type);
                     field = gens.at(1 + rand()%getOtherClasses().size()-1).split(" = ").at(0);
-                    gens.append("expected = "+pair.first);
-                    gens.append(field + " = "+pair.first);
-                    gens.append("assert "+field+" == expected");
+//                    gens.append("expected = "+pair.first);
+//                    gens.append(field + " = "+pair.first);
+//                    gens.append("assert "+field+" == expected");
                 }else{
                     int type = 1+rand()%4;
                     pair = generateRandom(type);
@@ -685,7 +539,11 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                     return;
                 }
             }
-            gens.insert(gens.size()-1, method.getName()+"()");
+            gens.append("expected = "+pair.first);
+            gens.append(field + " = "+pair.first);
+            gens.append(method.getName()+"()");
+            gens.append("assert "+field+" == expected");
+//            gens.insert(gens.size()-1, method.getName()+"()");
 
         }else{
             QStringList allArgs;
@@ -720,9 +578,9 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                 int type = 1+rand()%4;
                 pair = generateRandom(type);
                 field = getGlobalFields().at(1 + rand()%getGlobalFields().size()-1);
-                gens.append("expected = "+pair.first);
-                gens.append(field + " = "+pair.first);
-                gens.append("assert "+field+" == expected");
+//                gens.append("expected = "+pair.first);
+//                gens.append(field + " = "+pair.first);
+//                gens.append("assert "+field+" == expected");
             }else{
 
                 //если есть дополнительные классы
@@ -734,9 +592,9 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                     int type = 1+rand()%4;
                     pair = generateRandom(type);
                     field = gens.at(1 + rand()%getOtherClasses().size()-1).split(" = ").at(0);
-                    gens.append("expected = "+pair.first);
-                    gens.append(field + " = "+pair.first);
-                    gens.append("assert "+field+" == expected");
+//                    gens.append("expected = "+pair.first);
+//                    gens.append(field + " = "+pair.first);
+//                    gens.append("assert "+field+" == expected");
                 }else{
                     for(int i{0}; i < getMethod().getArgs().size(); ++i){
                         int ind = 1 + rand()%allArgs.size()-1;
@@ -751,12 +609,15 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                     return;
                 }
             }
-            gens.insert(gens.size()-1, method.getName()+"("+listArgs+")");
+            gens.append("expected = "+pair.first);
+            gens.append(field + " = "+pair.first);
+            gens.append(method.getName()+"("+listArgs+")");
+            gens.append("assert "+field+" == expected");
+//            gens.insert(gens.size()-1, method.getName()+"("+listArgs+")");
 
         }
     }else{
         //Метод класса
-        srand(time(0));
         QString obj{"object_"+classInfo.getName()};
         gens.append(obj+" = "+classInfo.getName()+"()");
 
@@ -778,9 +639,9 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                     int type = 1+rand()%4;
                     pair = generateRandom(type);
                     field = getGlobalFields().at(1 + rand()%getGlobalFields().size()-1);
-                    gens.append("expected = "+pair.first);
-                    gens.append(field + " = "+pair.first);
-                    gens.append("assert "+field+" == expected");
+//                    gens.append("expected = "+pair.first);
+//                    gens.append(field + " = "+pair.first);
+//                    gens.append("assert "+field+" == expected");
                 }else{
 
                     //если есть дополнительные классы
@@ -791,20 +652,23 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                         int type = 1+rand()%4;
                         pair = generateRandom(type);
                         field = gens.at(1 + rand()%getOtherClasses().size()-1).split(" = ").at(0);
-                        gens.append("expected = "+pair.first);
-                        gens.append(field + " = "+pair.first);
-                        gens.append("assert "+field+" == expected");
+//                        gens.append("expected = "+pair.first);
+//                        gens.append(field + " = "+pair.first);
+//                        gens.append("assert "+field+" == expected");
                     }else{
                         int type = 1+rand()%4;
                         pair = generateRandom(type);
                         gens.append("expected = "+pair.first);
-                        gens.append(obj+"."+method.getName()+"("+listArgs+")");
+                        gens.append(obj+"."+method.getName()+"()");
                         setGens(gens);
                         return;
                     }
                 }
-
-                gens.insert(gens.size()-1, obj+"."+method.getName()+"()");
+                gens.append("expected = "+pair.first);
+                gens.append(field + " = "+pair.first);
+                gens.append(obj+"."+method.getName()+"()");
+                gens.append("assert "+field+" == expected");
+//                gens.insert(gens.size()-1, obj+"."+method.getName()+"()");
             }else{
                 //Класс содержит поля
 
@@ -825,13 +689,11 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                     //Выбираем случайно поле класса или глобальную переменную
                     QString field = total.at(1+rand()%total.size()-1);
 
-                    //Вызываем метод
-                    QString method = obj+classInfo.getName()+"()";
-
                     QString result = (type >= 4) ? random.first : random.second;
 
                     gens.append("expected = "+result);
                     gens.append(field + " = "+result);
+                    gens.append(obj+"."+method.getName()+"()");
                     gens.append("assert "+field+" == expected");
                 }else{
 
@@ -843,19 +705,24 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                         int type = 1+rand()%4;
                         pair = generateRandom(type);
                         field = classInfo.getFields().at(1 + rand()%classInfo.getFields().size()-1);
-                        gens.append("expected = "+pair.first);
-                        gens.append(field + " = "+pair.first);
-                        gens.append("assert "+field+" == expected");
+//                        gens.append("expected = "+pair.first);
+//                        gens.append(field + " = "+pair.first);
+//                        gens.append("assert "+field+" == expected");
                     }else{
                         int type = 1+rand()%4;
                         pair = generateRandom(type);
                         field = classInfo.getFields().at(1 + rand()%classInfo.getFields().size()-1);
-                        gens.append("expected = "+pair.first);
-                        gens.append(field + " = "+pair.first);
-                        gens.append("assert "+field+" == expected");
+//                        gens.append("expected = "+pair.first);
+//                        gens.append(field + " = "+pair.first);
+//                        gens.append("assert "+field+" == expected");
                     }
+                    gens.append("expected = "+result);
+                    gens.append(field + " = "+result);
+                    gens.append(obj+"."+method.getName()+"()");
+                    gens.append("assert "+field+" == expected");
                 }
-                gens.insert(gens.size()-1, obj+"."+method.getName()+"()");
+
+//                gens.insert(gens.size()-1, obj+"."+method.getName()+"()");
 
             }
 
@@ -867,10 +734,9 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                 pair = generateRandom(type);
                 result = (type >= 4) ? pair.first : pair.second;
                 gens.append("args_"+QString::number(i)+" = " + result);
-//                listArgs += "args_"+QString::number(i)+",";
                 allArgs.append("args_"+QString::number(i)+",");
             }
-//            listArgs.chop(1);
+
             //если класс не содержит полей
             if(classInfo.getFields().size() == 0){
 
@@ -895,9 +761,9 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                     int type = 1+rand()%4;
                     pair = generateRandom(type);
                     field = getGlobalFields().at(1 + rand()%getGlobalFields().size()-1);
-                    gens.append("expected = "+pair.first);
-                    gens.append(field + " = "+pair.first);
-                    gens.append("assert "+field+" == expected");
+//                    gens.append("expected = "+pair.first);
+//                    gens.append(field + " = "+pair.first);
+//                    gens.append("assert "+field+" == expected");
                 }else{
 
                     //если есть дополнительные классы
@@ -915,9 +781,9 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                         int type = 1+rand()%4;
                         pair = generateRandom(type);
                         field = gens.at(1 + rand()%getOtherClasses().size()-1).split(" = ").at(0);
-                        gens.append("expected = "+pair.first);
-                        gens.append(field + " = "+pair.first);
-                        gens.append("assert "+field+" == expected");
+//                        gens.append("expected = "+pair.first);
+//                        gens.append(field + " = "+pair.first);
+//                        gens.append("assert "+field+" == expected");
                     }else{
                         for(int i{0}; i < getMethod().getArgs().size(); ++i){
                             int ind = 1 + rand()%allArgs.size()-1;
@@ -932,8 +798,12 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                         return;
                     }
                 }
+                gens.append("expected = "+pair.first);
+                gens.append(field + " = "+pair.first);
+                gens.append(obj+"."+method.getName()+"("+listArgs+")");
+                gens.append("assert "+field+" == expected");
 
-                gens.insert(gens.size()-1, obj+"."+method.getName()+"("+listArgs+")");
+//                gens.insert(gens.size()-1, obj+"."+method.getName()+"("+listArgs+")");
             }else{
                 //Класс содержит поля
 
@@ -965,12 +835,13 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                     QString field = total.at(1+rand()%total.size()-1);
 
                     //Вызываем метод
-                    QString method = obj+classInfo.getName()+"("+listArgs+")";
+//                    QString method = obj+classInfo.getName()+"("+listArgs+")";
 
                     QString result = (type >= 4) ? random.first : random.second;
 
                     gens.append("expected = "+result);
                     gens.append(field + " = "+result);
+                    gens.append(obj+"."+method.getName()+"("+listArgs+")");
                     gens.append("assert "+field+" == expected");
                 }else{
 
@@ -988,9 +859,9 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                         int type = 1+rand()%4;
                         pair = generateRandom(type);
                         field = classInfo.getFields().at(1 + rand()%classInfo.getFields().size()-1);
-                        gens.append("expected = "+pair.first);
-                        gens.append(field + " = "+pair.first);
-                        gens.append("assert "+field+" == expected");
+//                        gens.append("expected = "+pair.first);
+//                        gens.append(field + " = "+pair.first);
+//                        gens.append("assert "+field+" == expected");
                     }else{
                         for(int i{0}; i < getMethod().getArgs().size(); ++i){
                             int ind = 1 + rand()%allArgs.size()-1;
@@ -1000,12 +871,16 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                         int type = 1+rand()%4;
                         pair = generateRandom(type);
                         field = classInfo.getFields().at(1 + rand()%classInfo.getFields().size()-1);
-                        gens.append("expected = "+pair.first);
-                        gens.append(field + " = "+pair.first);
-                        gens.append("assert "+field+" == expected");
+//                        gens.append("expected = "+pair.first);
+//                        gens.append(field + " = "+pair.first);
+//                        gens.append("assert "+field+" == expected");
                     }
+
+                    gens.append("expected = "+pair.first);
+                    gens.append(field + " = "+pair.first);
+                    gens.append("assert "+field+" == expected");
                 }
-                gens.insert(gens.size()-1, obj+"."+method.getName()+"("+listArgs+")");
+//                gens.insert(gens.size()-1, obj+"."+method.getName()+"("+listArgs+")");
 
             }
 

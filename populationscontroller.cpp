@@ -8,7 +8,7 @@ PopulationsController::PopulationsController(int total, QObject *parent)
       totalIterations(total){
 
     for(int i{0}; i < 4; ++i)
-        listFileNames.append(QString::number(i+1)+"_text.json");
+        listFileNames.insert(QString::number(i+1)+"_text.json", false);
 }
 
 PopulationsController::~PopulationsController(){
@@ -27,7 +27,12 @@ PopulationsController::~PopulationsController(){
 void PopulationsController::initPopulation(){
 
     qDebug() << "КОЛИЧЕСТВО ПОПУЛЯЦИЙ = "<<listPopulation.size();
-//    return;
+
+    if(listPopulation.size() == 0){
+        qDebug() << "КОЛИЧЕСТВО ПОПУЛЯЦИЙ = 0";
+        return;
+    }
+
     for(int i{0}; i < listPopulation.size(); ++i){
         QThread* thread = new QThread(this);
         listPopulation.at(i)->moveToThread(thread);
@@ -48,15 +53,21 @@ void PopulationsController::initPopulation(){
 
 void PopulationsController::checkFiles(){
     int amount{0};
-    for(int i{0}; i < listFileNames.size(); ++i){
-        QFile file(QApplication::applicationDirPath()+"/"+listFileNames.at(i));
-        if(file.size() != 0)
+
+    for(auto itr = listFileNames.begin(); itr != listFileNames.end(); ++itr){
+        QFile file(QApplication::applicationDirPath() + "/" + itr.key());
+        if(file.size() != 0){
             ++amount;
+            itr.value() = true;
+        }
     }
 
-    for(int i{0}; i < amount; ++i){
-        Population* pop = new Population(i+1, totalIterations);
-        listPopulation.append(pop);
+    int i{0};
+    for(auto itr = listFileNames.begin(); itr != listFileNames.end(); ++itr){
+        if(itr.value() == true){
+            Population* pop = new Population(++i, totalIterations, itr.key());
+            listPopulation.append(pop);
+        }
     }
 
 }

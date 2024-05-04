@@ -8,7 +8,8 @@ Population::Population()
       numberIteration(0),
       totalIterations(0),
       currentIteration(0),
-      index(0){ }
+      index(0),
+      filePath(""){ }
 
 Population::Population(float mutation, float crossover)
     :mutationProbability (mutation),
@@ -17,19 +18,21 @@ Population::Population(float mutation, float crossover)
         numberIteration(0),
         totalIterations(0),
         currentIteration(0),
-        index(0)
+        index(0),
+        filePath("")
 {
 
 }
 
-Population::Population(int index, int totalIterations)
+Population::Population(int index, int totalIterations, const QString filePath)
     :mutationProbability (0.02),
     crossoverProbability (0.80),
     tournamentNum(3),
     numberIteration(0),
     totalIterations(totalIterations),
     currentIteration(0),
-    index(index)
+    index(index),
+    filePath(filePath)
 {
 
 }
@@ -62,57 +65,49 @@ QPair<AbstractChromosome *, AbstractChromosome *> Population::outbreeding()
      *  генотипа
      */
 
-//    int index1{rand()%(tempListChromosome.size()-1)};
-//    qDebug() << "index1 = "<<index1;
-//    AbstractChromosome* parent1 = tempListChromosome.at(index1);
-//    int maxDiff{std::numeric_limits<int>::min()};
-//    int index2{-1};
-
-//    for(int i{0}; i<tempListChromosome.size(); ++i){
-//        float diff{std::abs(tempListChromosome[i]->getFitness() - parent1->getFitness())};
-//        if(diff > maxDiff && diff != 0){
-//            maxDiff = diff;
-//            index2 = i;
-//        }
-//    }
-
-//    if(index2 == -1)
-//        return qMakePair(new AbstractChromosome(), new AbstractChromosome());
-
-//    qDebug() <<"index2 = "<<index2;
-//    AbstractChromosome* parent2 = tempListChromosome[index2];
-
-//    return qMakePair(parent1, parent2);
-
+//    srand(time(0));
     QMap<int, int> map;
 
-    int index1{1-rand()%(tempListChromosome.size()-1)};
-    qDebug() <<"ПОПУЛЯЦИЯ "<<QString::number(this->index)<<": index1 = "<<index1<<"\ttemp = "<<tempListChromosome.size();
+    int index1{1+rand()%tempListChromosome.size()-1};
+    qDebug() <<"ПОПУЛЯЦИЯ "<<QString::number(this->index)<<": index1 = "<<index1<<"\ttemp.size = "<<tempListChromosome.size();
+
     AbstractChromosome* parent1 = tempListChromosome.at(index1);
     int index2{-1};
 
 //    qDebug() <<"ПОПУЛЯЦИЯ "<<QString::number(this->index)<< "1index2 = "<<index2;
     QStringList parent1Gens = parent1->getGens();
+    qDebug() << tempListChromosome;
     for(int i{0}; i < tempListChromosome.size(); ++i){
         if(tempListChromosome.at(i) != parent1){
 
             AbstractChromosome* abs = tempListChromosome.at(i);
-            qDebug() << abs->getClassInfo().getName();
+//            qDebug() << abs->getClassInfo().getName();
             QStringList absGens = abs->getGens();
             int differences{0}; //различия
             if(parent1Gens.size() >= absGens.size()){
-                for(int k{0}; k < parent1Gens.size(); ++k){
-                    if(parent1Gens.at(i) != absGens.at(i))
+                for(int k{0}; k < absGens.size(); ++k){
+                    if(parent1Gens.at(k) != absGens.at(k))
                         ++differences;
                 }
-            }else{
-                for(int k{0}; k < absGens.size(); ++k){
-                    if(parent1Gens.at(i) != absGens.at(i))
+            }else if(parent1Gens.size() < absGens.size()){
+                for(int k{0}; k < parent1Gens.size(); ++k){
+                    if(parent1Gens.at(k) != absGens.at(k))
                         ++differences;
                 }
             }
+//            else{
+//                for(int k{0}; k < parent1Gens.size(); ++k){
+//                    if(parent1Gens.at(k) != absGens.at(k))
+//                        ++differences;
+//                }
+//            }
             map.insert(i, differences);
         }
+    }
+
+    if(map.isEmpty()){
+        qDebug() << "Во временной популяции все особи одинаковы.";
+        return qMakePair(new AbstractChromosome(), new AbstractChromosome());
     }
 
     int max{std::numeric_limits<int>::min()};
@@ -125,11 +120,11 @@ QPair<AbstractChromosome *, AbstractChromosome *> Population::outbreeding()
     }
 
     if(index2 == -1){
-        qDebug() << "index2 = -1";
+        qDebug() <<"ПОПУЛЯЦИЯ "<<QString::number(this->index)<< " index2 = -1. Родителей нет.";
         return qMakePair(new AbstractChromosome(), new AbstractChromosome());
     }
 
-    qDebug() <<"ПОПУЛЯЦИЯ "<<QString::number(this->index)<< "2index2 = "<<index2;
+    qDebug() <<"ПОПУЛЯЦИЯ "<<QString::number(this->index)<< " 2index2 = "<<index2;
     AbstractChromosome* parent2 = tempListChromosome.at(index2);
 
     qDebug() <<"ПОПУЛЯЦИЯ "<<QString::number(this->index)<< "КОНЕЦ РАБОТЫ АУТБРИДИНГА";
@@ -138,6 +133,7 @@ QPair<AbstractChromosome *, AbstractChromosome *> Population::outbreeding()
 
 void Population::operatorCrossover()
 {
+    srand(time(0));
     qDebug() << "\nРАБОТАЕТ ОПЕРАТОР КРОССОВЕР";
     QPair<AbstractChromosome*, AbstractChromosome*> parents = outbreeding();
 
@@ -210,13 +206,14 @@ void Population::operatorCrossover()
     qDebug()<<"list2: "<<list2;
 
     //добавляем потомков в промежуточную популяцию
+    //НУЖНО ЛИ ЗАПОЛНЯТЬ ИНФУ ПРО МЕТОД ИЛИ ПОПУЛЯЦИЮ. TODO ПРОВЕРИТЬ ЭТО
     AbstractChromosome* child1 = new AbstractChromosome();
     child1->setGens(list1);
-    child1->setFitness(rand()%100);
+    child1->fitnessCalculation();
 
     AbstractChromosome* child2 = new AbstractChromosome();
     child2->setGens(list2);
-    child2->setFitness(rand()%100);
+    child2->fitnessCalculation();
 
     newListChromosome.append(QList<AbstractChromosome*>() << child1 << child2);
 
@@ -235,6 +232,7 @@ float Population::randomFloat(){
 
 void Population::operatorMutation()
 {
+    srand(time(0));
     qDebug() << "\nРАБОТАЕТ ОПЕРАТОР МУТАЦИИ";
     float curProbMutation = randomFloat();
 //    float curProbMutation = 0.01;
@@ -244,7 +242,11 @@ void Population::operatorMutation()
         return;
     }
 
-    int index{rand()%(tempListChromosome.size()-1)};
+    int index{1+rand()%tempListChromosome.size()-1};
+    if(index < 0){
+        qDebug() << "Нет мутации. Индекс = -1";
+        return;
+    }
     AbstractChromosome* chromosome = currentListChromosome.at(index);
 
     if(chromosome->getGens().size() == 1){
@@ -265,18 +267,36 @@ void Population::operatorSelection()
      * Эта операция повторяется N раз.
      * Особи в полученном промежуточном массиве затем используются для скрещивания.
      */
-
+    qDebug() << "РАБОТАЕТ ОТБОР РОДИТЕЛЕЙ ДЛЯ СЕЛЕКЦИИ";
     tempListChromosome.clear();
-    srand(time(NULL));
+    srand(time(0));
     for(int i{0}; i<currentListChromosome.size(); ++i){
 
         QList<AbstractChromosome*> temp;
         for(ushort i{0}; i < tournamentNum; ++i){
-            AbstractChromosome* chro = currentListChromosome.at(rand() % (currentListChromosome.size() - 1));
+            int ind = 1+rand() % currentListChromosome.size()-1;
+            AbstractChromosome* chro = currentListChromosome.at(ind);
             temp.append(chro);
         }
 
+        if(temp.at(0) == temp.at(1) && temp.at(1) == temp.at(2) && temp.at(2) == temp.at(0))
+            qDebug() << "все особи равны";
+
+        //выбираем наилучшую особь
         auto itr = std::max_element(temp.begin(), temp.end(), [](AbstractChromosome* ch1, AbstractChromosome* ch2){ return ch1->getFitness() < ch2->getFitness();});
+
+        qDebug() << temp;
+        int ind{0};
+        if(temp.at(0)->getFitness() == temp.at(1)->getFitness() &&
+                temp.at(1)->getFitness() == temp.at(2)->getFitness() &&
+                temp.at(2)->getFitness() == temp.at(0)->getFitness()){
+
+
+            ind = 0+rand()%3;
+            qDebug() << "3 отобранных особи в турнирном методе имеют одинаковое значение финтнесс-функции. Выбираем наугад "<<ind;
+            itr = temp.begin()+ind;
+        }
+
 
         //добавляем лучшую особь в промежуточный список
         tempListChromosome.append(*itr);
@@ -324,21 +344,13 @@ void Population::avgFitnessCalculation()
     avgFitnessFunc = avg/currentListChromosome.size();
     qDebug() << "среднее значение функции пригодности = "<<avgFitnessFunc;
 
-    if(fitnessFunction.size() < 6){
-        fitnessFunction.append(avgFitnessFunc);
-        return;
-    }else{
-        fitnessFunction.removeFirst();
-        fitnessFunction.append(avgFitnessFunc);
-    }
-
 }
 
 void Population::initPopulation()
 {
 
     JSONparser* parser = new JSONparser();
-    parser->setFileName(QString::number(index)+"_text.json");
+    parser->setFileName(filePath);
     listGeneralInfo = parser->parseJSONPopulation();
 //    qDebug() << "listGeneralInfo = "<<listGeneralInfo.size();
 
@@ -402,45 +414,6 @@ void Population::start(){
         emit signalReadySwap();
 }
 
-//void Population::initMethodInfo(const int size)
-//{
-//    srand(time(NULL));
-//    for(int i{0}; i<size; ++i){
-//        int count = 0 + rand() % 5;
-//        int count1 = 0 + rand() %3;
-//        QStringList args, fields;
-//        for(int k{0}; k < count; ++k)
-//            args.append("args_"+QString::number(k));
-
-//        for(int j{0}; j < count1; ++j)
-//            fields.append("field_"+QString::number(j));
-
-//        listGeneralInfo.append(new GeneralInfo(ClassInfo("class_"+QString::number(i), fields),
-//                                             Method("method_"+QString::number(i), args, 1+rand()%50, true)));
-//    }
-
-//    srand(time(NULL));
-//    for(int i{0}; i<size; ++i){
-//        int count1 = 0 + rand() %5;
-//        QStringList args;
-//        for(int k{0}; k < count1; ++k)
-//            args.append("args_"+QString::number(k));
-
-//        listMethodInfo.append(new MethodInfo(ClassInfo(),
-//                                             Method("glob_method_"+QString::number(i), args, 1+rand()%50)));
-//    }
-//}
-
-//void Population::printMethodInfo()
-//{
-//    qDebug() << "\nНАЧИНАЮ ПЕЧАТАТЬ ИНФУ О МЕТОДАХ";
-//    for(int i{0}; i < listGeneralInfo.size(); ++i)
-//        qDebug() << listGeneralInfo[i]->getClassInfo().getName() << " "
-//                 <<listGeneralInfo[i]->getClassInfo().getFields()<<" "
-//                <<listGeneralInfo[i]->getMethod().getName()<<" "
-//               <<listGeneralInfo[i]->getMethod().getArgs() << " "
-//              <<listGeneralInfo[i]->getMethod().getLinesCount();
-//}
 
 void Population::printChromosome(){
     qDebug() << "\nНАЧИНАЮ ПЕЧАТАТЬ ХРОМОСОМЫ";

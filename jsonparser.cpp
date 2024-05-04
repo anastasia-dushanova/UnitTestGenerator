@@ -14,7 +14,7 @@ QList<GeneralInfo *> JSONparser::parseJSONPopulation()
     QFile file(QApplication::applicationDirPath() +"/"+fileName);
 
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-        qDebug() << "Не удается открыть файл "<<fileName;
+        qDebug() << "JSONparser::parseJSONPopulation:\tНе удается открыть файл "<<fileName;
         return QList<GeneralInfo*>();
     }
 
@@ -98,7 +98,7 @@ void JSONparser::parseJSONCluster()
 
     QFile file(QApplication::applicationDirPath()+"/"+fileName);
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-        qDebug() << "Не удается открыть файл "<<fileName;
+        qDebug() << "JSONparser::parseJSONCluster\tНе удается открыть файл "<<fileName;
         return;
     }
     QString val = file.readAll();

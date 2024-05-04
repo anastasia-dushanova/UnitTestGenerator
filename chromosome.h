@@ -11,61 +11,126 @@
 #include <QPair>
 #include <QStringList>
 
-
-
-/* тест-кейс, при которой тестируется функция, возвращающая что-то, имеет вид:
- * types1 = 5
- * types2 = 7
- * assert method(types1,types2) == 12
+/*!
+ * \brief Класс, содержащий информацию о методе
  */
-
-/*
- * тест-кейс, при которой тестируется функция, ничего невозвращающая, имеет вид:
- *  # Инициализация необходимых переменных
-    expected_state = 'initial state'
-    actual_state = expected_state
-
-    # Вызов тестируемой функции
-    func_with_side_effect()
-
-    # Проверка изменения состояния
-    assert actual_state == 'expected state'
- *
- * при тестировании такого вида функции, проверяется изменение состояний полей класса
- */
-
 class Method{
 
 public:
+    /*!
+     * \brief Конструктор класса
+     */
     Method() : name(""), args(""), linesCount(0), returnValue(false){ }
+
+    /*!
+     * \brief Конструктор класса
+     * \param name - Имя метода
+     * \param args - Аргументы метода
+     * \param linesCount - Количество строк, занимаемые методом
+     * \param value - Возвращающий ли метод
+     */
     Method(QString name, QStringList args, int linesCount, bool value)
         : name(name), args(args), linesCount(linesCount), returnValue(value){ }
-    ~Method() { }
 
+    /*!
+     * \brief Деструктор класса
+     */
+    ~Method();
+
+    /*!
+     * \brief Получить имя метода
+     * \return Имя метода
+     */
     QString getName() { return name; }
+
+    /*!
+     * \brief Установить имя метода
+     * \param name - Имя метода
+     */
     void setName(QString name) { this->name = name; }
 
+    /*!
+     * \brief Получить аргументы метода
+     * \return Список аргументов метода
+     */
     QStringList getArgs() { return args; }
+
+    /*!
+     * \brief Установить аргументы метода
+     * \param args - Список аргументов метода
+     */
     void setArgs(QStringList args) {this->args = args; }
 
+    /*!
+     * \brief Получить количество строк метода
+     * \return Количество строк
+     */
     int getLinesCount() { return linesCount; }
+
+    /*!
+     * \brief Установить количество строк метода
+     * \param count - Количество строк метода
+     */
     void setLinesCount(int count) { this->linesCount = count; }
 
+    /*!
+     * \brief Возвращающий ли метод
+     * \return Да или нет
+     */
     bool getReturnValue() { return returnValue; }
+
+    /*!
+     * \brief Установить вид метода
+     * \param value - Возвращающий или нет
+     */
     void setReturnValue(bool value) { this->returnValue = value; }
 
 private:
+
+    /*!
+     * \brief Имя метода
+     */
     QString name;
+
+    /*!
+     * \brief Список аргументов
+     */
     QStringList args;
+
+    /*!
+     * \brief Количество строк
+     */
     int linesCount;
+
+    /*!
+     * \brief Возвращающий ли метод
+     */
     bool returnValue;
 };
 
+
+/*!
+ * \brief Информация о методе
+ */
 class ClassInfo{
 public:
+
+    /*!
+     * \brief Конструктор класса
+     */
     ClassInfo() : name(""), fields(QStringList()) { }
+
+    /*!
+     * \brief Конструктор класса
+     * \param Имя класса
+     * \param Поля класса
+     */
     ClassInfo(QString name, QStringList fields) : name(name), fields(fields){ }
-    ~ClassInfo() { }
+
+    /*!
+     * \brief Деструктор класса
+     */
+    ~ClassInfo();
 
     QString getName() { return name; }
     void setName(QString name) { this->name = name; }

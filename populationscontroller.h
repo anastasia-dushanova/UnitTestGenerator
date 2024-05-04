@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QThread>
+#include <QTimer>
 #include <population.h>
 #include <testcasedecor.h>
 
@@ -16,7 +17,6 @@ public:
     void setListPopulation(QList<Population*> count) { this->listPopulation = count; }
     QList<Population*> getListPopulation() { return listPopulation; }
 
-//    void setTotalIteration(int total) { this->totalIterations = total; }
     int getTotalIteration () { return totalIterations; }
 
     void appendPopulation(Population* pop){ listPopulation.append(pop); }
@@ -46,9 +46,11 @@ private:
 
     TestCaseDecor* decor;
 
-    QStringList listFileNames;
+    QMap<QString, bool> listFileNames;
 
     const int totalIterations;
+
+    QTimer timer;
 
 };
 
