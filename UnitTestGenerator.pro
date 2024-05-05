@@ -17,6 +17,7 @@ SOURCES += \
     methodinfo.cpp \
     population.cpp \
     populationscontroller.cpp \
+    recorder.cpp \
     testcasedecor.cpp \
     testcluster.cpp \
     unittestgenerator.cpp
@@ -27,6 +28,7 @@ HEADERS += \
     methodinfo.h \
     population.h \
     populationscontroller.h \
+    recorder.h \
     testcasedecor.h \
     testcluster.h \
     unittestgenerator.h

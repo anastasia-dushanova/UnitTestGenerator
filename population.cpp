@@ -53,6 +53,7 @@ Population::~Population(){
 QPair<AbstractChromosome *, AbstractChromosome *> Population::outbreeding()
 {
     qDebug() <<"ПОПУЛЯЦИЯ "<<QString::number(this->index)<< "РАБОТАЕТ АУТБРИДИНГ";
+    writeMessage("РАБОТАЕТ АУТБРИДИНГ");
     /* Выбор родителей.
      * Аутбридинг - 1ый родитель выбирается случайно, а 2ым выбирается такой,
      * который наименее похож на 1го.
@@ -128,6 +129,7 @@ QPair<AbstractChromosome *, AbstractChromosome *> Population::outbreeding()
     AbstractChromosome* parent2 = tempListChromosome.at(index2);
 
     qDebug() <<"ПОПУЛЯЦИЯ "<<QString::number(this->index)<< "КОНЕЦ РАБОТЫ АУТБРИДИНГА";
+    writeMessage("КОНЕЦ РАБОТЫ АУТБРИДИНГА");
     return qMakePair(parent1, parent2);
 }
 
@@ -135,6 +137,7 @@ void Population::operatorCrossover()
 {
     srand(time(0));
     qDebug() << "\nРАБОТАЕТ ОПЕРАТОР КРОССОВЕР";
+    writeMessage("РАБОТАЕТ ОПЕРАТОР КРОССОВЕР");
     QPair<AbstractChromosome*, AbstractChromosome*> parents = outbreeding();
 
     qDebug() << "operatorCrossover: parent1 = "<<parents.first->getFitness() << "parent2 = "<<parents.second->getFitness();
@@ -234,10 +237,16 @@ float Population::randomFloat(){
     return (float)(rand() / (RAND_MAX + 1.0)) * (max - min) + min;
 }
 
+void Population::writeMessage(QString message)
+{
+    emit signalWriteMessage(index, message);
+}
+
 void Population::operatorMutation()
 {
     srand(time(0));
     qDebug() << "\nРАБОТАЕТ ОПЕРАТОР МУТАЦИИ";
+    writeMessage("РАБОТАЕТ ОПЕРАТОР МУТАЦИИ");
     float curProbMutation = randomFloat();
 //    float curProbMutation = 0.01;
     qDebug() << "curProbMutation = "<<curProbMutation<< "\tmutationProbability = "<<mutationProbability;
@@ -272,6 +281,7 @@ void Population::operatorSelection()
      * Особи в полученном промежуточном массиве затем используются для скрещивания.
      */
     qDebug() << "РАБОТАЕТ ОТБОР РОДИТЕЛЕЙ ДЛЯ СЕЛЕКЦИИ";
+    writeMessage("РАБОТАЕТ ОТБОР РОДИТЕЛЕЙ ДЛЯ СЕЛЕКЦИИ");
     tempListChromosome.clear();
     srand(time(0));
     for(int i{0}; i<currentListChromosome.size(); ++i){
@@ -311,6 +321,7 @@ void Population::operatorSelection()
 void Population::operatorReduction()
 {
     qDebug() << "\nРАБОТАЕТ ОПЕРАТОР ОТБОРА РОДИТЕЛЕЙ В НОВУЮ ПОПУЛЯЦИЮ";
+    writeMessage("РАБОТАЕТ ОПЕРАТОР ОТБОРА РОДИТЕЛЕЙ В НОВУЮ ПОПУЛЯЦИЮ");
     //элитарный отбор. конкурентный вид: выбираем лучшие
     for(auto ch : currentListChromosome)
         newListChromosome.append(ch);
@@ -333,6 +344,7 @@ void Population::operatorReduction()
 void Population::fitnessCalculation()
 {
     qDebug() << "\nРАСЧЕТ ФУНКЦИИ ПРИГОДНОСТИ ДЛЯ КАЖДОЙ ОСОБИ В ПОПУЛЯЦИИ";
+    writeMessage("РАСЧЕТ ФУНКЦИИ ПРИГОДНОСТИ ДЛЯ КАЖДОЙ ОСОБИ В ПОПУЛЯЦИИ");
     for(int i{0}; i < populationSize; ++i)
         currentListChromosome.at(i)->fitnessCalculation();
 
@@ -340,7 +352,8 @@ void Population::fitnessCalculation()
 
 void Population::avgFitnessCalculation()
 {
-    qDebug() <<"\nРАСЧЕТ СРЕДНЕЙ ФУКЦНИИ ПРИГОДНОСТИ ДЛЯ ПОПУЛЯЦИИ";
+    qDebug() <<"\nРАСЧЕТ СРЕДНЕЙ ФУНКЦИИ ПРИГОДНОСТИ ДЛЯ ПОПУЛЯЦИИ";
+    writeMessage("РАСЧЕТ СРЕДНЕЙ ФУНКЦИИ ПРИГОДНОСТИ ДЛЯ ПОПУЛЯЦИИ");
     float avg{0.0};
     for(auto ch : currentListChromosome)
         avg += ch->getFitness();
@@ -421,6 +434,7 @@ void Population::start(){
 
 void Population::printChromosome(){
     qDebug() << "\nНАЧИНАЮ ПЕЧАТАТЬ ХРОМОСОМЫ";
+    writeMessage("НАЧИНАЮ ПЕЧАТАТЬ ХРОМОСОМЫ");
     qDebug() <<"\nКоличество хромосом = "<<currentListChromosome.size();
     for(int i{0}; i < currentListChromosome.size(); ++i)
         qDebug() << currentListChromosome[i]->getGens();

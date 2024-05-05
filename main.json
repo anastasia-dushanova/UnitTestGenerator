@@ -9,12 +9,12 @@
             "args": ["arg_1"],
             "linesCount": 123,
             "name": "method_21",
-            "retVal": true
+            "retVal": false
         }, {
             "args": ["arg_1", "arg_2"],
             "linesCount": 123,
             "name": "method_22",
-            "retVal": true
+            "retVal": false
         }],
         "name": "class_2"
     },
@@ -33,7 +33,7 @@
             "args": ["arg_1"],
             "linesCount": 123,
             "name": "method_11",
-            "retVal": true
+            "retVal": false
         }, {
             "args": ["arg_1", "arg_2"],
             "linesCount": 123,
@@ -57,19 +57,19 @@
             "args": ["arg_1"],
             "linesCount": 123,
             "name": "method_111",
-            "retVal": true
+            "retVal": false
         }, {
             "args": [],
             "linesCount": 123,
             "name": "method_112",
-            "retVal": true
+            "retVal": false
         },{
             "args": ["arg_1", "arg_2", "arg_3"],
             "linesCount": 123,
             "name": "method_113",
-            "retVal": true
+            "retVal": false
         }],
-        "name": ""
+        "name": "class_3"
     },
     "global_fields": [],
     "other_classes": ["other1"]

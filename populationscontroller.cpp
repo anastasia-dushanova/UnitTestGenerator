@@ -43,6 +43,7 @@ void PopulationsController::initPopulation(){
         connect(listPopulation.at(i), SIGNAL(signalFinish()), this, SLOT(slotFinish()));
         connect(this, SIGNAL(signalStart()), listPopulation.at(i), SLOT(start()));
         connect(this, SIGNAL(signalContinue()), listPopulation.at(i), SLOT(start()));
+        connect(listPopulation.at(i), SIGNAL(signalWriteMessage(int,QString)), this, SLOT(slotWriteMessage(int,QString)));
 
         thread->start();
     }
@@ -50,6 +51,10 @@ void PopulationsController::initPopulation(){
     emit signalStart();
     timer.start();
 
+}
+
+void PopulationsController::slotWriteMessage(int index, QString message){
+    emit signalWrite(index, message);
 }
 
 void PopulationsController::checkFiles(){

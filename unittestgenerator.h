@@ -2,6 +2,8 @@
 #define UNITTESTGENERATOR_H
 
 #include <QMainWindow>
+#include <populationscontroller.h>
+#include <testcluster.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class UnitTestGenerator; }
@@ -15,7 +17,13 @@ public:
     UnitTestGenerator(QWidget *parent = nullptr);
     ~UnitTestGenerator();
 
+private slots:
+    void slotWriteMessage(int index, QString message);
+
 private:
+
     Ui::UnitTestGenerator *ui;
+
+    PopulationsController* controller;
 };
 #endif // UNITTESTGENERATOR_H

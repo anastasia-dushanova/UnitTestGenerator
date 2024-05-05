@@ -158,6 +158,13 @@ signals:
      */
     void signalFinish();
 
+    /*!
+     * \brief Вывод сообщения на экран
+     * \param index Индекс популяции
+     * \param message Сообщение
+     */
+    void signalWriteMessage(int index, QString message);
+
 private:
 
     /*!
@@ -250,6 +257,8 @@ private:
      * \return Вещественное число
      */
     float randomFloat();
+
+    void writeMessage(QString message);
 
 
 };

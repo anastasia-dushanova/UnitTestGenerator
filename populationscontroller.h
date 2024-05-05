@@ -11,6 +11,8 @@ class PopulationsController : public QObject
 {
     Q_OBJECT
 public:
+    friend class UnitTestGenerator;
+
     /*!
      * \brief Конструктор класса
      * \param Количество итераций в алгоритме
@@ -68,6 +70,13 @@ signals:
      */
     void signalContinue();
 
+    /*!
+     * \brief Сигнал о выводе на экран сообщения
+     * \param index Индекс популяции
+     * \param message Текст сообщения
+     */
+    void signalWrite(int index, QString message);
+
 public slots:
     /*!
      * \brief Слот для окончания алгоритма. Собираем хромосомы со всех популяций и оформляем их в тест-кейсы
@@ -79,6 +88,12 @@ public slots:
      */
     void slotCheckCount();
 
+    /*!
+     * \brief Вывести сообщение на экран
+     * \param index Индекс популяции
+     * \param message Текст сообщения
+     */
+    void slotWriteMessage(int index, QString message);
 private:
     /*!
      * \brief Обменяться хромосомами

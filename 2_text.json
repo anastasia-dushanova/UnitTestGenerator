@@ -2,6 +2,80 @@
 {
     "class": {
         "fields": [
+            "field1",
+            "field2"
+        ],
+        "method": {
+            "args": [
+                "arg_1"
+            ],
+            "linesCount": 123,
+            "name": "method_21",
+            "retVal": false
+        },
+        "name": "class_2"
+    },
+    "global_fields": [
+        "gl_f_1",
+        "gl_f_2"
+    ],
+    "other_classes": [
+        "other1"
+    ]
+}
+,
+{
+    "class": {
+        "fields": [
+            "field1",
+            "field2"
+        ],
+        "method": {
+            "args": [
+                "arg_1",
+                "arg_2"
+            ],
+            "linesCount": 123,
+            "name": "method_22",
+            "retVal": false
+        },
+        "name": "class_2"
+    },
+    "global_fields": [
+        "gl_f_1",
+        "gl_f_2"
+    ],
+    "other_classes": [
+        "other1"
+    ]
+}
+,
+{
+    "class": {
+        "fields": [
+            "field1"
+        ],
+        "method": {
+            "args": [
+                "arg_1"
+            ],
+            "linesCount": 123,
+            "name": "method_11",
+            "retVal": false
+        },
+        "name": "class_21"
+    },
+    "global_fields": [
+        "gl_f_1"
+    ],
+    "other_classes": [
+        "other1"
+    ]
+}
+,
+{
+    "class": {
+        "fields": [
             "field1"
         ],
         "method": {
@@ -42,6 +116,70 @@
     },
     "global_fields": [
         "gl_f_1"
+    ],
+    "other_classes": [
+        "other1"
+    ]
+}
+,
+{
+    "class": {
+        "fields": [
+        ],
+        "method": {
+            "args": [
+                "arg_1"
+            ],
+            "linesCount": 123,
+            "name": "method_111",
+            "retVal": false
+        },
+        "name": "class_3"
+    },
+    "global_fields": [
+    ],
+    "other_classes": [
+        "other1"
+    ]
+}
+,
+{
+    "class": {
+        "fields": [
+        ],
+        "method": {
+            "args": [
+            ],
+            "linesCount": 123,
+            "name": "method_112",
+            "retVal": false
+        },
+        "name": "class_3"
+    },
+    "global_fields": [
+    ],
+    "other_classes": [
+        "other1"
+    ]
+}
+,
+{
+    "class": {
+        "fields": [
+        ],
+        "method": {
+            "args": [
+                "arg_1",
+                "arg_2",
+                "arg_3"
+            ],
+            "linesCount": 123,
+            "name": "method_113",
+            "retVal": false
+        },
+        "name": "class_3"
+    },
+    "global_fields": [
     ],
     "other_classes": [
         "other1"
