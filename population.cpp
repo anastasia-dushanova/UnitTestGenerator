@@ -137,7 +137,7 @@ void Population::operatorCrossover()
     qDebug() << "\nРАБОТАЕТ ОПЕРАТОР КРОССОВЕР";
     QPair<AbstractChromosome*, AbstractChromosome*> parents = outbreeding();
 
-    qDebug() << "fitness: parent1 = "<<parents.first->getFitness() << "parent2 = "<<parents.second->getFitness();
+    qDebug() << "operatorCrossover: parent1 = "<<parents.first->getFitness() << "parent2 = "<<parents.second->getFitness();
     if(parents.first->getFitness() == -1 && parents.second->getFitness() == -1){
         qDebug() << "Ошибка при выборе родителей";
         return;
@@ -209,10 +209,14 @@ void Population::operatorCrossover()
     //НУЖНО ЛИ ЗАПОЛНЯТЬ ИНФУ ПРО МЕТОД ИЛИ ПОПУЛЯЦИЮ. TODO ПРОВЕРИТЬ ЭТО
     AbstractChromosome* child1 = new AbstractChromosome();
     child1->setGens(list1);
+    child1->setMethod(parents.first->getMethod());
+    child1->setClassInfo(parents.first->getClassInfo());
     child1->fitnessCalculation();
 
     AbstractChromosome* child2 = new AbstractChromosome();
     child2->setGens(list2);
+    child2->setMethod(parents.second->getMethod());
+    child2->setClassInfo(parents.second->getClassInfo());
     child2->fitnessCalculation();
 
     newListChromosome.append(QList<AbstractChromosome*>() << child1 << child2);

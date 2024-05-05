@@ -16,9 +16,29 @@ class Population : public QObject
 {
     Q_OBJECT
 public:
+    /*!
+     * \brief Конструктор класса
+     */
     Population();
+
+    /*!
+     * \brief Конструктор класса
+     * \param mut Вероятность мутации
+     * \param cross Вероятность кроссовера
+     */
     Population(float mut, float cross);
+
+    /*!
+     * \brief Конструктор класса
+     * \param index Номер популяции
+     * \param total Количество итераций
+     * \param filePath Имя файла с JSON
+     */
     Population(int index, int total, QString filePath);
+
+    /*!
+     * \brief Деструктор
+     */
     ~Population();
 
     /*!
@@ -68,23 +88,74 @@ public:
      */
     bool checkStopCondition();
 
+    /*!
+     * \brief Установить размер популяции
+     * \param populationSize Размер популяции
+     */
     void setPopulationSize(int populationSize) { this->populationSize = populationSize; }
+
+    /*!
+     * \brief Получить размер популяции
+     * \return Размер популяции
+     */
     int getPopulationSize() { return populationSize; }
 
+    /*!
+     * \brief Получить текущий список хромосом
+     * \return Текущий список хромосом
+     */
     QList<AbstractChromosome*> getCurrentList () { return currentListChromosome; }
+
+    /*!
+     * \brief Установить текущий список хромосом
+     * \param list Список хромосом
+     */
     void setCurrentList(QList<AbstractChromosome*> list) { this->currentListChromosome = list; }
 
+    /*!
+     * \brief Получить номер итерации (используется для обмена особями с другой популяцией)
+     * \return Номер итерации
+     */
     int getNumberIterations() { return numberIteration; }
+
+    /*!
+     * \brief Установить номер итерации
+     * \param num Номер итерации
+     */
     void setNumberIterations(int num) { this->numberIteration = num; }
 
+    /*!
+     * \brief Напечатать хромосомы
+     */
     void printChromosome();
+
+    /*!
+     * \brief Получить список хромосом от другой популяции
+     * \param list Список новых хромосом
+     */
     void receiveChromosomes(QList<AbstractChromosome*> list);
+
+    /*!
+     * \brief Отправить список хромосом другой популяции
+     * \param count Количество отправляемых хромосом
+     * \return Список отправляемых хромосом
+     */
     QList<AbstractChromosome*> sendChromosomes(const int count);
 
 public slots:
+    /*!
+     * \brief Слот начала алгоритма
+     */
     void start();
 signals:
+    /*!
+     * \brief Сигнал о готовности популяции к обмену особями
+     */
     void signalReadySwap();
+
+    /*!
+     * \brief Сигнал о завершении алгоритма
+     */
     void signalFinish();
 
 private:
@@ -124,6 +195,9 @@ private:
      */
     int populationSize;
 
+    /*!
+     * \brief Список информации о классе и методах
+     */
     QList<GeneralInfo*> listGeneralInfo;
 
     /*!
@@ -131,14 +205,29 @@ private:
      */
     int avgFitnessFunc;
 
+    /*!
+     * \brief Количество итераций, по завершению которых происходит обмен особями с другой популяцией
+     */
     int numberIteration;
 
+    /*!
+     * \brief Общее количество итераций
+     */
     int totalIterations;
 
+    /*!
+     * \brief Текущая итерация
+     */
     int currentIteration;
 
+    /*!
+     * \brief Порядковый номер популяции
+     */
     int index;
 
+    /*!
+     * \brief Имя файла, с которого будет считываться JSON
+     */
     QString filePath;
 
     /*!

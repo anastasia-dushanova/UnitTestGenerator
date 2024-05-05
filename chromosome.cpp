@@ -390,11 +390,11 @@ void ChromosomeReturningFunc::mutationGen()
     else if(argName.contains("expected"))
         newGen = argName.split(" = ").at(0) + " = " + pair.first;
 
-    else if(argName.contains("field"))
-        newGen = argName.split(" = ").at(0) + " = " + pair.first;
+//    else if(argName.contains("field"))
+//        newGen = argName.split(" = ").at(0) + " = " + pair.first;
 
-    else if(argName.contains("global"))
-        newGen = argName.split(" = ").at(0) + " = " + pair.first;
+//    else if(argName.contains("global"))
+//        newGen = argName.split(" = ").at(0) + " = " + pair.first;
 
     else
         newGen = "args_0 = " + pair.first;
@@ -472,8 +472,8 @@ void ChromosomeNonReturningFunc::mutationGen()
     else if(argName.contains("object_class"))
         newGen = argName.split(" = ").at(0) + " = " + pair.first;
 
-    else if(argName.contains("global"))
-        newGen = argName.split(" = ").at(0) + " = " + pair.first;
+//    else if(argName.contains("global"))
+//        newGen = argName.split(" = ").at(0) + " = " + pair.first;
 
     else
         newGen = "args_0 = " + pair.first;

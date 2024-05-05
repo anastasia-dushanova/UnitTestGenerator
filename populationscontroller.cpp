@@ -48,6 +48,7 @@ void PopulationsController::initPopulation(){
     }
 
     emit signalStart();
+    timer.start();
 
 }
 
@@ -117,6 +118,8 @@ void PopulationsController::slotFinish(){
 
         populationsFinished = 0;
     }
+
+    qDebug("Прошло времени: %d мс", timer.elapsed());
 
     decor = new TestCaseDecor("decor.txt");
 
