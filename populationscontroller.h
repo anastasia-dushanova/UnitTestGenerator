@@ -44,6 +44,18 @@ public:
     int getTotalIteration () { return totalIterations; }
 
     /*!
+     * \brief Установить вероятность мутации
+     * \param mut Вероятность мутации
+     */
+    void setProbMutation(float mut) { this->probMutation = mut; }
+
+    /*!
+     * \brief Установить вероятность кроссовера
+     * \param cross Вероятность кроссовера
+     */
+    void setProbCrossover(float cross) { this->probCross = cross; }
+
+    /*!
      * \brief Добавить популяцию
      * \param pop Популция
      */
@@ -75,7 +87,7 @@ signals:
      * \param index Индекс популяции
      * \param message Текст сообщения
      */
-    void signalWrite(int index, QString message);
+    void signalWrite(int index, const QString& message);
 
 public slots:
     /*!
@@ -93,7 +105,7 @@ public slots:
      * \param index Индекс популяции
      * \param message Текст сообщения
      */
-    void slotWriteMessage(int index, QString message);
+    void slotWriteMessage(int index, const QString& message);
 private:
     /*!
      * \brief Обменяться хромосомами
@@ -144,6 +156,21 @@ private:
      * \brief Таймер
      */
     QTime timer;
+
+    /*!
+     * \brief Вероятность мутации
+     */
+    float probMutation;
+
+    /*!
+     * \brief Вероятность кроссовера
+     */
+    float probCross;
+
+    /*!
+     * \brief Порядковый номер
+     */
+    int index;
 
 };
 

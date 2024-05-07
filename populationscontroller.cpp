@@ -5,10 +5,13 @@ PopulationsController::PopulationsController(int total, QObject *parent)
       populationsReady(0),
       populationsFinished(0),
       countSwap(0),
-      totalIterations(total){
+      totalIterations(total),
+      index(5){
 
     for(int i{0}; i < 4; ++i)
         listFileNames.insert(QString::number(i+1)+"_text.json", false);
+
+    connect(this, SIGNAL(signalWrite(int,QString)), SLOT(slotWriteMessage(int,QString)));
 }
 
 PopulationsController::~PopulationsController(){
@@ -27,6 +30,7 @@ PopulationsController::~PopulationsController(){
 void PopulationsController::initPopulation(){
 
     qDebug() << "КОЛИЧЕСТВО ПОПУЛЯЦИЙ = "<<listPopulation.size();
+//    emit signalWrite(5, "КОЛИЧЕСТВО ПОПУЛЯЦИЙ = ");
 
     if(listPopulation.size() == 0){
         qDebug() << "КОЛИЧЕСТВО ПОПУЛЯЦИЙ = 0";
@@ -43,7 +47,7 @@ void PopulationsController::initPopulation(){
         connect(listPopulation.at(i), SIGNAL(signalFinish()), this, SLOT(slotFinish()));
         connect(this, SIGNAL(signalStart()), listPopulation.at(i), SLOT(start()));
         connect(this, SIGNAL(signalContinue()), listPopulation.at(i), SLOT(start()));
-        connect(listPopulation.at(i), SIGNAL(signalWriteMessage(int,QString)), this, SLOT(slotWriteMessage(int,QString)));
+        connect(listPopulation.at(i), SIGNAL(signalWriteMessage(int,const QString&)), this, SLOT(slotWriteMessage(int,const QString&)));
 
         thread->start();
     }
@@ -53,7 +57,7 @@ void PopulationsController::initPopulation(){
 
 }
 
-void PopulationsController::slotWriteMessage(int index, QString message){
+void PopulationsController::slotWriteMessage(int index, const QString& message){
     emit signalWrite(index, message);
 }
 
@@ -72,6 +76,8 @@ void PopulationsController::checkFiles(){
     for(auto itr = listFileNames.begin(); itr != listFileNames.end(); ++itr){
         if(itr.value() == true){
             Population* pop = new Population(++i, totalIterations, itr.key());
+            pop->setProbMutation(probMutation);
+            pop->setProbCrossover(probCross);
             listPopulation.append(pop);
         }
     }

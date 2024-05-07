@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/src">
+        <file>add_dir.png</file>
+        <file>add_file.png</file>
+        <file>clear.png</file>
+        <file>delete_file.png</file>
+        <file>open_file.png</file>
+        <file>start.png</file>
+        <file>folder.png</file>
+        <file>open_folder.png</file>
+        <file>file.png</file>
+    </qresource>
+</RCC>

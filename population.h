@@ -42,92 +42,22 @@ public:
     ~Population();
 
     /*!
-     * \brief Оператор скрещивания
+     * \brief Установить веротноять мутации
+     * \param mut Вероятность мутации
      */
-    void operatorCrossover();
+    void setProbMutation(const float mut) { this->mutationProbability = mut; }
 
     /*!
-     * \brief Оператор мутации
+     * \brief Установить вероятность кроссовера
+     * \param cross Вероятность кроссовера
      */
-    void operatorMutation();
-
-    /*!
-     * \brief Оператор выбора родителей для оператора скрещивания
-     */
-    void operatorSelection();
-
-    /*!
-     * \brief Оценить степень приспособленности каждой особи
-     */
-    void fitnessCalculation();
-
-    /*!
-     * \brief Оценить среднее значение функции приспособленности в популяции
-     */
-    void avgFitnessCalculation();
-
-    /*!
-     * \brief Создать началую популяцю
-     */
-    void initPopulation();
-
-    /*!
-     * \brief Оператор отбора особей в новую популяцию (редукция)
-     */
-    void operatorReduction();
-
-    /*!
-     * \brief Оператор выбора родителей (выбран аутбридинг)
-     * \return Пара родителей, к которым будет применен оператор скрещивания
-     */
-    QPair<AbstractChromosome*, AbstractChromosome*> outbreeding();
-
-    /*!
-     * \brief Проверить условие останова
-     * \return Решение: продолжить исполнение алгоритма или выйти
-     */
-    bool checkStopCondition();
-
-    /*!
-     * \brief Установить размер популяции
-     * \param populationSize Размер популяции
-     */
-    void setPopulationSize(int populationSize) { this->populationSize = populationSize; }
-
-    /*!
-     * \brief Получить размер популяции
-     * \return Размер популяции
-     */
-    int getPopulationSize() { return populationSize; }
+    void setProbCrossover(const float cross) { this->crossoverProbability = cross;}
 
     /*!
      * \brief Получить текущий список хромосом
      * \return Текущий список хромосом
      */
     QList<AbstractChromosome*> getCurrentList () { return currentListChromosome; }
-
-    /*!
-     * \brief Установить текущий список хромосом
-     * \param list Список хромосом
-     */
-    void setCurrentList(QList<AbstractChromosome*> list) { this->currentListChromosome = list; }
-
-    /*!
-     * \brief Получить номер итерации (используется для обмена особями с другой популяцией)
-     * \return Номер итерации
-     */
-    int getNumberIterations() { return numberIteration; }
-
-    /*!
-     * \brief Установить номер итерации
-     * \param num Номер итерации
-     */
-    void setNumberIterations(int num) { this->numberIteration = num; }
-
-    /*!
-     * \brief Напечатать хромосомы
-     */
-    void printChromosome();
 
     /*!
      * \brief Получить список хромосом от другой популяции
@@ -141,6 +71,12 @@ public:
      * \return Список отправляемых хромосом
      */
     QList<AbstractChromosome*> sendChromosomes(const int count);
+
+    /*!
+     * \brief Вывести сообщение на печать
+     * \param message Сообщение на печать
+     */
+    void writeMessage(const QString& message);
 
 public slots:
     /*!
@@ -163,7 +99,7 @@ signals:
      * \param index Индекс популяции
      * \param message Сообщение
      */
-    void signalWriteMessage(int index, QString message);
+    void signalWriteMessage(int index, const QString& message);
 
 private:
 
@@ -185,12 +121,12 @@ private:
     /*!
      * \brief Вероятность мутации = 0.02
      */
-    const float mutationProbability ;
+    mutable float mutationProbability ;
 
     /*!
      * \brief Вероятность кроссовера = 0.8
      */
-    const float crossoverProbability;
+    mutable float crossoverProbability;
 
     /*!
      * \brief Размер турнира = 3
@@ -258,7 +194,89 @@ private:
      */
     float randomFloat();
 
-    void writeMessage(QString message);
+
+
+    /*!
+     * \brief Оператор скрещивания
+     */
+    void operatorCrossover();
+
+    /*!
+     * \brief Оператор мутации
+     */
+    void operatorMutation();
+
+    /*!
+     * \brief Оператор выбора родителей для оператора скрещивания
+     */
+    void operatorSelection();
+
+    /*!
+     * \brief Оценить степень приспособленности каждой особи
+     */
+    void fitnessCalculation();
+
+    /*!
+     * \brief Оценить среднее значение функции приспособленности в популяции
+     */
+    void avgFitnessCalculation();
+
+    /*!
+     * \brief Создать началую популяцю
+     */
+    void initPopulation();
+
+    /*!
+     * \brief Оператор отбора особей в новую популяцию (редукция)
+     */
+    void operatorReduction();
+
+    /*!
+     * \brief Оператор выбора родителей (выбран аутбридинг)
+     * \return Пара родителей, к которым будет применен оператор скрещивания
+     */
+    QPair<AbstractChromosome*, AbstractChromosome*> outbreeding();
+
+    /*!
+     * \brief Проверить условие останова
+     * \return Решение: продолжить исполнение алгоритма или выйти
+     */
+    bool checkStopCondition();
+
+    /*!
+     * \brief Установить размер популяции
+     * \param populationSize Размер популяции
+     */
+    void setPopulationSize(int populationSize) { this->populationSize = populationSize; }
+
+    /*!
+     * \brief Получить размер популяции
+     * \return Размер популяции
+     */
+    int getPopulationSize() { return populationSize; }
+
+    /*!
+     * \brief Установить текущий список хромосом
+     * \param list Список хромосом
+     */
+    void setCurrentList(QList<AbstractChromosome*> list) { this->currentListChromosome = list; }
+
+    /*!
+     * \brief Получить номер итерации (используется для обмена особями с другой популяцией)
+     * \return Номер итерации
+     */
+    int getNumberIterations() { return numberIteration; }
+
+    /*!
+     * \brief Установить номер итерации
+     * \param num Номер итерации
+     */
+    void setNumberIterations(int num) { this->numberIteration = num; }
+
+    /*!
+     * \brief Напечатать хромосомы
+     */
+    void printChromosome();
 
 
 };

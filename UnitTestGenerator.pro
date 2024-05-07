@@ -17,7 +17,6 @@ SOURCES += \
     methodinfo.cpp \
     population.cpp \
     populationscontroller.cpp \
-    recorder.cpp \
     testcasedecor.cpp \
     testcluster.cpp \
     unittestgenerator.cpp
@@ -28,7 +27,6 @@ HEADERS += \
     methodinfo.h \
     population.h \
     populationscontroller.h \
-    recorder.h \
     testcasedecor.h \
     testcluster.h \
     unittestgenerator.h
@@ -48,5 +46,8 @@ DISTFILES += \
     ../build-UnitTestGenerator-Desktop_Qt_5_12_12_MinGW_64_bit-Debug/debug/4_text.json \
     ../build-UnitTestGenerator-Desktop_Qt_5_12_12_MinGW_64_bit-Debug/debug/decor.txt \
     ../build-UnitTestGenerator-Desktop_Qt_5_12_12_MinGW_64_bit-Debug/debug/main.json
+
+RESOURCES += \
+    src/resorces.qrc
 
 
