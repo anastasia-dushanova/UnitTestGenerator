@@ -12,5 +12,6 @@
         <file>cover.png</file>
         <file>status.png</file>
         <file>time.png</file>
+        <file>generator.png</file>
     </qresource>
 </RCC>

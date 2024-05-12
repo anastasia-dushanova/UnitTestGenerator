@@ -7,11 +7,15 @@
     <x>0</x>
     <y>0</y>
     <width>2485</width>
-    <height>1345</height>
+    <height>1645</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>UnitTestGenerator</string>
+   <string>Генератор модульных тестов</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="src/resorces.qrc">
+    <normaloff>:/src/generator.png</normaloff>:/src/generator.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget {
@@ -85,8 +89,8 @@ QToolButton{
      <rect>
       <x>20</x>
       <y>940</y>
-      <width>921</width>
-      <height>311</height>
+      <width>1161</width>
+      <height>621</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -101,8 +105,8 @@ QToolButton{
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>551</width>
-        <height>151</height>
+        <width>1141</width>
+        <height>561</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -122,8 +126,8 @@ QToolButton{
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>551</width>
-        <height>151</height>
+        <width>1141</width>
+        <height>561</height>
        </rect>
       </property>
       <property name="readOnly">
@@ -140,8 +144,8 @@ QToolButton{
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>551</width>
-        <height>151</height>
+        <width>1141</width>
+        <height>561</height>
        </rect>
       </property>
       <property name="readOnly">
@@ -158,8 +162,8 @@ QToolButton{
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>551</width>
-        <height>151</height>
+        <width>1141</width>
+        <height>561</height>
        </rect>
       </property>
       <property name="readOnly">
@@ -171,10 +175,10 @@ QToolButton{
    <widget class="QPlainTextEdit" name="plainTextEdit_main">
     <property name="geometry">
      <rect>
-      <x>950</x>
+      <x>1190</x>
       <y>980</y>
-      <width>1521</width>
-      <height>271</height>
+      <width>1281</width>
+      <height>581</height>
      </rect>
     </property>
     <property name="readOnly">
@@ -186,7 +190,7 @@ QToolButton{
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>551</width>
+      <width>621</width>
       <height>171</height>
      </rect>
     </property>
@@ -199,13 +203,16 @@ QToolButton{
     <widget class="QToolButton" name="toolButton_deleteFile">
      <property name="geometry">
       <rect>
-       <x>380</x>
+       <x>450</x>
        <y>30</y>
        <width>151</width>
        <height>121</height>
       </rect>
      </property>
      <property name="toolTip">
+      <string>Удалить файл</string>
+     </property>
+     <property name="statusTip">
       <string>Удалить файл</string>
      </property>
      <property name="text">
@@ -223,14 +230,17 @@ QToolButton{
     <widget class="QToolButton" name="toolButton_addFile">
      <property name="geometry">
       <rect>
-       <x>200</x>
+       <x>230</x>
        <y>30</y>
-       <width>151</width>
+       <width>171</width>
        <height>121</height>
       </rect>
      </property>
      <property name="toolTip">
-      <string>Добавить файлы</string>
+      <string>Добавить файл</string>
+     </property>
+     <property name="statusTip">
+      <string>Добавить файл</string>
      </property>
      <property name="text">
       <string>Добавить
@@ -258,11 +268,14 @@ QToolButton{
       <rect>
        <x>20</x>
        <y>30</y>
-       <width>151</width>
+       <width>161</width>
        <height>121</height>
       </rect>
      </property>
      <property name="toolTip">
+      <string>Добавить каталог</string>
+     </property>
+     <property name="statusTip">
       <string>Добавить каталог</string>
      </property>
      <property name="text">
@@ -281,7 +294,7 @@ QToolButton{
    <widget class="QGroupBox" name="groupBox_params">
     <property name="geometry">
      <rect>
-      <x>570</x>
+      <x>640</x>
       <y>10</y>
       <width>911</width>
       <height>171</height>
@@ -312,6 +325,12 @@ QToolButton{
      </item>
      <item row="2" column="2">
       <widget class="QLineEdit" name="lineEdit_iterations">
+       <property name="toolTip">
+        <string>Установить количество итераций</string>
+       </property>
+       <property name="statusTip">
+        <string>Установить количество итераций</string>
+       </property>
        <property name="styleSheet">
         <string notr="true"/>
        </property>
@@ -329,6 +348,12 @@ QToolButton{
      </item>
      <item row="2" column="0">
       <widget class="QComboBox" name="comboBox_probMut">
+       <property name="toolTip">
+        <string>Установить вероятность мутации</string>
+       </property>
+       <property name="statusTip">
+        <string>Установить вероятность мутации</string>
+       </property>
        <item>
         <property name="text">
          <string>1</string>
@@ -365,6 +390,12 @@ QToolButton{
      </item>
      <item row="2" column="1">
       <widget class="QSpinBox" name="spinBox_probCross">
+       <property name="toolTip">
+        <string>Установить вероятность кроссовера</string>
+       </property>
+       <property name="statusTip">
+        <string>Установить вероятность кроссовера</string>
+       </property>
        <property name="value">
         <number>80</number>
        </property>
@@ -430,7 +461,7 @@ QToolButton{
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>1490</x>
+      <x>1560</x>
       <y>10</y>
       <width>526</width>
       <height>171</height>
@@ -440,6 +471,9 @@ QToolButton{
      <item>
       <widget class="QPushButton" name="pushButton_start">
        <property name="toolTip">
+        <string>Запуск программы</string>
+       </property>
+       <property name="statusTip">
         <string>Запуск программы</string>
        </property>
        <property name="text">
@@ -462,6 +496,9 @@ QToolButton{
        <property name="toolTip">
         <string>Очистить вывод всех популяций</string>
        </property>
+       <property name="statusTip">
+        <string>Очистить вывод всех популяций</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -480,6 +517,9 @@ QToolButton{
      <item>
       <widget class="QPushButton" name="pushButton_clearCurPop">
        <property name="toolTip">
+        <string>Очистить выбранную популяцию</string>
+       </property>
+       <property name="statusTip">
         <string>Очистить выбранную популяцию</string>
        </property>
        <property name="text">
@@ -502,6 +542,9 @@ QToolButton{
        <property name="toolTip">
         <string>Очистить всё</string>
        </property>
+       <property name="statusTip">
+        <string>Очистить всё</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -519,6 +562,12 @@ QToolButton{
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_show">
+       <property name="toolTip">
+        <string>Просмотр файла с тест-кейсами</string>
+       </property>
+       <property name="statusTip">
+        <string>Просмотр файла с тест-кейсами</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -536,7 +585,7 @@ QToolButton{
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>450</x>
@@ -689,6 +738,9 @@ QToolButton{
      <width>2485</width>
      <height>39</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
    </property>
    <widget class="QMenu" name="menu">
     <property name="title">

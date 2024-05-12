@@ -174,25 +174,25 @@ void PopulationsController::slotFinish(){
         int time{timer->elapsed()};
         qDebug() << "finish таймер "<<timer;
         qDebug("Прошло времени: %d мс", time);
-        emit signalWrite(index,  QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tПрошло времени: " + QString::number(time) + " мс");
-        emit signalTimeElapsed(time);
-        emit signalFinish(coveragedMethods, totalsMethods);
-        emit signalWrite(index, QDateTime::currentDateTime().time().toString("hh:mm:ss")
-                         +"\tВсего покрытых методов: "
-                         + QString::number(coveragedMethods)
-                         +"\tВсего методов: "
-                         + QString::number(totalsMethods));
-
-        totalsMethods = 0;
-        coveragedMethods = 0;
-        countSwap = 0;
-
         decor = new TestCaseDecor("decor.txt");
 
         for(auto p : listPopulation)
             decor->appendToListTestCase(p->getCurrentList());
 
         decor->decor();
+
+        emit signalWrite(index,  QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tПрошло времени: " + QString::number(time) + " мс");
+        emit signalTimeElapsed(time);
+        emit signalFinish(coveragedMethods, totalsMethods);
+        emit signalWrite(index, QDateTime::currentDateTime().time().toString("hh:mm:ss")
+                         +"\tВсего покрытых методов: "
+                         + QString::number(coveragedMethods)
+                         +"\t\tВсего методов: "
+                         + QString::number(totalsMethods));
+
+        totalsMethods = 0;
+        coveragedMethods = 0;
+        countSwap = 0;
 
     }
 

@@ -30,6 +30,8 @@ UnitTestGenerator::UnitTestGenerator(QWidget *parent)
     connect(process, SIGNAL(readyReadStandardError()), this, SLOT(slotReadPythonAnalys()));
 
     ui->pushButton_show->setEnabled(false);
+
+
 }
 
 
@@ -42,27 +44,32 @@ UnitTestGenerator::~UnitTestGenerator()
 void UnitTestGenerator::slotWriteMessage(int index, const QString& message){
     switch (index) {
     case 1:{
-        ui->plainTextEdit_1->setPlainText(ui->plainTextEdit_1->toPlainText()+"\n"+message);
+        ui->plainTextEdit_1->textCursor().movePosition(QTextCursor::End);
+        ui->plainTextEdit_1->insertPlainText("\n"+message);
         ui->plainTextEdit_1->verticalScrollBar()->setValue(ui->plainTextEdit_1->verticalScrollBar()->maximum());
         break;
     }
     case 2:{
-        ui->plainTextEdit_2->setPlainText(ui->plainTextEdit_2->toPlainText()+"\n"+message);
+        ui->plainTextEdit_2->textCursor().movePosition(QTextCursor::End);
+        ui->plainTextEdit_2->insertPlainText("\n"+message);
         ui->plainTextEdit_2->verticalScrollBar()->setValue(ui->plainTextEdit_2->verticalScrollBar()->maximum());
         break;
     }
     case 3:{
-        ui->plainTextEdit_3->setPlainText(ui->plainTextEdit_3->toPlainText()+"\n"+message);
+        ui->plainTextEdit_3->textCursor().movePosition(QTextCursor::End);
+        ui->plainTextEdit_3->insertPlainText("\n"+message);
         ui->plainTextEdit_3->verticalScrollBar()->setValue(ui->plainTextEdit_3->verticalScrollBar()->maximum());
         break;
     }
     case 4:{
-        ui->plainTextEdit_4->setPlainText(ui->plainTextEdit_4->toPlainText()+"\n"+message);
+        ui->plainTextEdit_4->textCursor().movePosition(QTextCursor::End);
+        ui->plainTextEdit_4->insertPlainText("\n"+message);
         ui->plainTextEdit_4->verticalScrollBar()->setValue(ui->plainTextEdit_4->verticalScrollBar()->maximum());
         break;
     }
     case 5:{
-        ui->plainTextEdit_main->setPlainText(ui->plainTextEdit_main->toPlainText()+"\n"+message);
+        ui->plainTextEdit_main->textCursor().movePosition(QTextCursor::End);
+        ui->plainTextEdit_main->insertPlainText("\n"+message);
         ui->plainTextEdit_main->verticalScrollBar()->setValue(ui->plainTextEdit_main->verticalScrollBar()->maximum());
         break;
     }
@@ -283,9 +290,12 @@ void UnitTestGenerator::slotReadPythonAnalys(){
 
     QString output = process->readAllStandardError();
     qDebug() << "python-анализатор: "<<output;
-    if(output != "all parsed")
+    if(output != "all parsed"){
+        QMessageBox::warning(this,
+                             "Сообщение от Python-анализатора",
+                             output);
         return;
-
+    }
     float probMut = ui->comboBox_probMut->currentText().toFloat();
     float probCross = ui->spinBox_probCross->text().toFloat();
     int iter = ui->lineEdit_iterations->text().toInt();
@@ -299,12 +309,12 @@ void UnitTestGenerator::slotReadPythonAnalys(){
     TestCluster* cluster = new TestCluster("/python/sw_templates.json");
     cluster->makeClusters();
 
-//    controller->setTotalIter(iter);
-//    controller->setProbMutation(probMut*0.01);
-//    controller->setProbCrossover(probCross*0.01);
+    controller->setTotalIter(iter);
+    controller->setProbMutation(probMut*0.01);
+    controller->setProbCrossover(probCross*0.01);
 
-//    controller->checkFiles();
-//    controller->initPopulation();
+    controller->checkFiles();
+    controller->initPopulation();
 
     delete cluster;
 }
@@ -318,8 +328,6 @@ void UnitTestGenerator::checkFiles(QStandardItem *parent){
 //    }
 //    qDebug() << "есть дети "<<parent->data();
 //    checkFiles(parent->child(0));
-
-
 
     if(parent->hasChildren()){
         for(auto row{0}; row < parent->rowCount(); ++row){
@@ -335,10 +343,11 @@ void UnitTestGenerator::checkFiles(QStandardItem *parent){
 
 void UnitTestGenerator::on_pushButton_start_clicked()
 {
-
-
     if(ui->treeView_files->model() == nullptr)
         return;
+
+    ui->plainTextEdit_main->textCursor().movePosition(QTextCursor::End);
+    ui->plainTextEdit_main->insertPlainText(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tЗапускается Python-анализатор\n");
 
     QFile file(QApplication::applicationDirPath()+"/python/list_python_code.txt");
     file.open(QIODevice::WriteOnly|QIODevice::Truncate);
@@ -346,6 +355,9 @@ void UnitTestGenerator::on_pushButton_start_clicked()
 
     if(!file.open(QIODevice::WriteOnly | QIODevice::Append)){
         qDebug() << "Невозможно открыть файл /python/list_python_code.txt";
+        QMessageBox::warning(this,
+                             "Внимание",
+                             "Невозможно открыть файл /python/list_python_code.txt\nОн используется для Python-анализатора");
         return;
     }
 
@@ -358,19 +370,11 @@ void UnitTestGenerator::on_pushButton_start_clicked()
         checkFiles(parent);
     }
 
-//    qDebug() << listFiles->size();
-//    for(auto l : *listFiles){
-//        qDebug() << l;
-//    }
 
     QTextStream stream(&file);
     //нужно оставить файлы только с питоном (.py)
     for(int i{0}; i < listFiles->size(); ++i){
-//        qDebug() << QString::number(i);
         QFileInfo info(listFiles->at(i));
-//        qDebug() << "\nlistfiles "<<listFiles->at(i);
-//        qDebug() << "info.name "<<info.filePath();
-//        qDebug() << "info.suffix " <<info.completeSuffix();
         if(info.completeSuffix() == "py"){
             //добавляем пути до файлов с кодом в list_python_code.txt
             stream << info.filePath().toUtf8() << "\n";
