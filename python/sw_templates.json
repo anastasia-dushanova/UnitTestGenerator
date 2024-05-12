@@ -1,0 +1,139 @@
+[
+  {
+    "class": {
+      "fields": [
+        "field2",
+        "x",
+        "field1",
+        "name",
+        "age"
+      ],
+      "methods": [
+        {
+          "args": [],
+          "linesCount": 1,
+          "name": "get_name",
+          "retVal": false
+        },
+        {
+          "args": [
+            "a"
+          ],
+          "linesCount": 3,
+          "name": "my_function",
+          "retVal": false
+        },
+        {
+          "args": [
+            "a",
+            "b"
+          ],
+          "linesCount": 1,
+          "name": "sum",
+          "retVal": true
+        }
+      ],
+      "name": "A"
+    },
+    "global_field": [
+      "global_field"
+    ],
+    "other_classes": [
+      "X"
+    ]
+  },
+  {
+    "class": {
+      "fields": [
+        "name",
+        "age"
+      ],
+      "methods": [
+        {
+          "args": [],
+          "linesCount": 1,
+          "name": "do_something",
+          "retVal": false
+        },
+        {
+          "args": [],
+          "linesCount": 1,
+          "name": "get_name",
+          "retVal": false
+        },
+        {
+          "args": [
+            "a"
+          ],
+          "linesCount": 3,
+          "name": "my_function",
+          "retVal": false
+        },
+        {
+          "args": [
+            "a",
+            "b"
+          ],
+          "linesCount": 1,
+          "name": "sum",
+          "retVal": true
+        }
+      ],
+      "name": "B"
+    },
+    "global_field": [
+      "global_field"
+    ],
+    "other_classes": [
+      "X"
+    ]
+  },
+  {
+    "class": {
+      "fields": [
+        "name"
+      ],
+      "methods": [],
+      "name": "X"
+    },
+    "global_field": [
+      "global_field"
+    ],
+    "other_classes": []
+  },
+  {
+    "class": {
+      "fields": [],
+      "methods": [
+        {
+          "args": [
+            "a",
+            "b",
+            "c"
+          ],
+          "linesCount": 5,
+          "name": "global_func",
+          "retVal": true
+        },
+        {
+          "args": [
+            "arg1",
+            "arg2"
+          ],
+          "linesCount": 2,
+          "name": "module_level_function",
+          "retVal": false
+        }
+      ],
+      "name": ""
+    },
+    "global_field": [
+      "global_field"
+    ],
+    "other_classes": [
+      "A",
+      "B",
+      "X"
+    ]
+  }
+]

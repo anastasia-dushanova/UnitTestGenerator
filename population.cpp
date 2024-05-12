@@ -40,20 +40,24 @@ Population::Population(int index, int totalIterations, const QString filePath)
 Population::~Population(){
 //    currentListChromosome.clear();  //??
 //        listMethodInfo.clear();
-    for(auto ch : currentListChromosome)
-        delete ch;
+    for(int i{0}; i < currentListChromosome.size(); ++i){
+        AbstractChromosome* abs = currentListChromosome.at(i);
+        delete abs;
+    }
 
-    for(auto m : listGeneralInfo)
-        delete m;
 
-    for(auto temp : tempListChromosome) //??
-        delete temp;
+    for(int i{0}; i < tempListChromosome.size(); ++i){
+        AbstractChromosome* abs = tempListChromosome.at(i);
+        delete abs;
+    }
+    currentListChromosome.clear();
+    tempListChromosome.clear();
 }
 
 QPair<AbstractChromosome *, AbstractChromosome *> Population::outbreeding()
 {
     qDebug() <<"ПОПУЛЯЦИЯ "<<QString::number(this->index)<< "РАБОТАЕТ АУТБРИДИНГ";
-//    writeMessage("РАБОТАЕТ АУТБРИДИНГ");
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tРаботает аутбридинг");
     /* Выбор родителей.
      * Аутбридинг - 1ый родитель выбирается случайно, а 2ым выбирается такой,
      * который наименее похож на 1го.
@@ -71,11 +75,11 @@ QPair<AbstractChromosome *, AbstractChromosome *> Population::outbreeding()
 
     int index1{1+rand()%tempListChromosome.size()-1};
     qDebug() <<"ПОПУЛЯЦИЯ "<<QString::number(this->index)<<": index1 = "<<index1<<"\ttemp.size = "<<tempListChromosome.size();
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tНомер второго родителя = "+QString::number(index1));
 
     AbstractChromosome* parent1 = tempListChromosome.at(index1);
     int index2{-1};
 
-//    qDebug() <<"ПОПУЛЯЦИЯ "<<QString::number(this->index)<< "1index2 = "<<index2;
     QStringList parent1Gens = parent1->getGens();
     qDebug() << tempListChromosome;
     for(int i{0}; i < tempListChromosome.size(); ++i){
@@ -108,6 +112,7 @@ QPair<AbstractChromosome *, AbstractChromosome *> Population::outbreeding()
 
     if(map.isEmpty()){
         qDebug() << "Во временной популяции все особи одинаковы.";
+        writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tВо временной популяции все особи одинаковы. Родителей нет");
         return qMakePair(new AbstractChromosome(), new AbstractChromosome());
     }
 
@@ -122,14 +127,16 @@ QPair<AbstractChromosome *, AbstractChromosome *> Population::outbreeding()
 
     if(index2 == -1){
         qDebug() <<"ПОПУЛЯЦИЯ "<<QString::number(this->index)<< " index2 = -1. Родителей нет.";
+        writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tНомер 2го родителя = -1. Родителей нет");
         return qMakePair(new AbstractChromosome(), new AbstractChromosome());
     }
 
     qDebug() <<"ПОПУЛЯЦИЯ "<<QString::number(this->index)<< " 2index2 = "<<index2;
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tНомер 2го родителя = "+QString::number(index2));
     AbstractChromosome* parent2 = tempListChromosome.at(index2);
 
     qDebug() <<"ПОПУЛЯЦИЯ "<<QString::number(this->index)<< "КОНЕЦ РАБОТЫ АУТБРИДИНГА";
-//    writeMessage("КОНЕЦ РАБОТЫ АУТБРИДИНГА");
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tКОНЕЦ РАБОТЫ АУТБРИДИНГА");
     return qMakePair(parent1, parent2);
 }
 
@@ -137,12 +144,13 @@ void Population::operatorCrossover()
 {
     srand(time(0));
     qDebug() << "\nРАБОТАЕТ ОПЕРАТОР КРОССОВЕР";
-//    writeMessage("РАБОТАЕТ ОПЕРАТОР КРОССОВЕР"); //что-то не так с этим
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tРаботает оператор кроссовер");
     QPair<AbstractChromosome*, AbstractChromosome*> parents = outbreeding();
 
     qDebug() << "operatorCrossover: parent1 = "<<parents.first->getFitness() << "parent2 = "<<parents.second->getFitness();
     if(parents.first->getFitness() == -1 && parents.second->getFitness() == -1){
         qDebug() << "Ошибка при выборе родителей";
+        writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tОшибка при выборе родителей");
         return;
     }
 
@@ -158,6 +166,7 @@ void Population::operatorCrossover()
     //если один из родителей содержит один ген
     if(list1.size() == 1 || list2.size() == 1){
         qDebug() << "Нет кроссовера";
+        writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tНет кроссовера. Один из родителей содержит только один ген");
         return;
     }
 
@@ -167,6 +176,7 @@ void Population::operatorCrossover()
     qDebug() << "\ncurProbCrossover = "<<curProbCrossover<<"\tcrossoverProbability = "<<crossoverProbability;
     if(curProbCrossover <= 1 && curProbCrossover >= 0 && curProbCrossover > crossoverProbability  ){
         qDebug() << "Нет кроссовера. curProbCrossover выше требуемой crossoverProbability";
+        writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tНет кроссовера. Сгенерированное число выше вероятности кроссовера");
         return;
     }
 
@@ -209,7 +219,6 @@ void Population::operatorCrossover()
     qDebug()<<"list2: "<<list2;
 
     //добавляем потомков в промежуточную популяцию
-    //НУЖНО ЛИ ЗАПОЛНЯТЬ ИНФУ ПРО МЕТОД ИЛИ ПОПУЛЯЦИЮ. TODO ПРОВЕРИТЬ ЭТО
     AbstractChromosome* child1 = new AbstractChromosome();
     child1->setGens(list1);
     child1->setMethod(parents.first->getMethod());
@@ -228,6 +237,8 @@ void Population::operatorCrossover()
 //    tempListChromosome.clear();
 
     qDebug()<<"Потомки добавлены в промежуточную популяцию";
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tПотомки добавлены в промежуточную популяцию");
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tКонец работы оператора кроссовера");
 }
 
 float Population::randomFloat(){
@@ -246,30 +257,35 @@ void Population::operatorMutation()
 {
     srand(time(0));
     qDebug() << "\nРАБОТАЕТ ОПЕРАТОР МУТАЦИИ";
-//    writeMessage("РАБОТАЕТ ОПЕРАТОР МУТАЦИИ");
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tРаботает оператор мутации");
     float curProbMutation = randomFloat();
 //    float curProbMutation = 0.01;
     qDebug() << "curProbMutation = "<<curProbMutation<< "\tmutationProbability = "<<mutationProbability;
     if(curProbMutation <=1 && curProbMutation >= 0 && curProbMutation > mutationProbability){
         qDebug() << "Нет мутации. curProbMutation выше требуемой mutationProbability";
+        writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tНет мутации. Сгенерированое число выше вероятности мутации");
         return;
     }
 
     int index{1+rand()%tempListChromosome.size()-1};
     if(index < 0){
         qDebug() << "Нет мутации. Индекс = -1";
+        writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tНет мутации. Индекс гена равен -1");
         return;
     }
     AbstractChromosome* chromosome = currentListChromosome.at(index);
 
     if(chromosome->getGens().size() == 1){
-        qDebug() << "Нет мутации. Длина гена не позовляет использовать замену гена";
+        qDebug() << "Нет мутации. Длина хромосомы не позовляет использовать замену гена";
+        writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tНет мутации. Длина хромосомы не позволяет использовать замену гена");
         return;
     }
 
     qDebug() <<"\nДо:\n"<<chromosome->getGens();
     chromosome->mutationGen();
     qDebug()<<"\nПосле\n"<<chromosome->getGens();
+
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tКонец работы оператора мутации");
 }
 
 void Population::operatorSelection()
@@ -281,7 +297,7 @@ void Population::operatorSelection()
      * Особи в полученном промежуточном массиве затем используются для скрещивания.
      */
     qDebug() << "РАБОТАЕТ ОТБОР РОДИТЕЛЕЙ ДЛЯ СЕЛЕКЦИИ";
-//    writeMessage("РАБОТАЕТ ОТБОР РОДИТЕЛЕЙ ДЛЯ СЕЛЕКЦИИ");
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tРаботает отбор родителей для селекции");
     tempListChromosome.clear();
     srand(time(0));
     for(int i{0}; i<currentListChromosome.size(); ++i){
@@ -307,7 +323,7 @@ void Population::operatorSelection()
 
 
             ind = 0+rand()%3;
-            qDebug() << "3 отобранных особи в турнирном методе имеют одинаковое значение финтнесс-функции. Выбираем наугад "<<ind;
+//            qDebug() << "3 отобранных особи в турнирном методе имеют одинаковое значение финтнесс-функции. Выбираем наугад "<<ind;
             itr = temp.begin()+ind;
         }
 
@@ -315,13 +331,13 @@ void Population::operatorSelection()
         //добавляем лучшую особь в промежуточный список
         tempListChromosome.append(*itr);
     }
-
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tКонец работы отбора родителей для селекции");
 }
 
 void Population::operatorReduction()
 {
     qDebug() << "\nРАБОТАЕТ ОПЕРАТОР ОТБОРА РОДИТЕЛЕЙ В НОВУЮ ПОПУЛЯЦИЮ";
-//    writeMessage("РАБОТАЕТ ОПЕРАТОР ОТБОРА РОДИТЕЛЕЙ В НОВУЮ ПОПУЛЯЦИЮ");
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tРаботает оператор отбора родителей в новую популяцию");
     //элитарный отбор. конкурентный вид: выбираем лучшие
     for(auto ch : currentListChromosome)
         newListChromosome.append(ch);
@@ -339,27 +355,30 @@ void Population::operatorReduction()
     }
 
     newListChromosome.clear();
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tКонец работы оператора отбора родителей в новую популяцию");
 }
 
 void Population::fitnessCalculation()
 {
     qDebug() << "\nРАСЧЕТ ФУНКЦИИ ПРИГОДНОСТИ ДЛЯ КАЖДОЙ ОСОБИ В ПОПУЛЯЦИИ";
-//    writeMessage("РАСЧЕТ ФУНКЦИИ ПРИГОДНОСТИ ДЛЯ КАЖДОЙ ОСОБИ В ПОПУЛЯЦИИ");
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tРасчет функции пригодности для каждой особи в популяции");
     for(int i{0}; i < populationSize; ++i)
         currentListChromosome.at(i)->fitnessCalculation();
 
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tФункция пригодности для каждой особи в популяции расчитана");
 }
 
 void Population::avgFitnessCalculation()
 {
     qDebug() <<"\nРАСЧЕТ СРЕДНЕЙ ФУНКЦИИ ПРИГОДНОСТИ ДЛЯ ПОПУЛЯЦИИ";
-//    writeMessage("РАСЧЕТ СРЕДНЕЙ ФУНКЦИИ ПРИГОДНОСТИ ДЛЯ ПОПУЛЯЦИИ");
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tРасчет средней функции пригодности для популяции");
     float avg{0.0};
     for(auto ch : currentListChromosome)
         avg += ch->getFitness();
 
     avgFitnessFunc = avg/currentListChromosome.size();
     qDebug() << "среднее значение функции пригодности = "<<avgFitnessFunc;
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tСреднее значение функции пригодности = "+QString::number(avgFitnessFunc));
 
 }
 
@@ -368,9 +387,12 @@ void Population::initPopulation()
 
     JSONparser* parser = new JSONparser();
     parser->setFileName(filePath);
-    listGeneralInfo = parser->parseJSONPopulation();
+    QList<GeneralInfo*> listGeneralInfo = parser->parseJSONPopulation();
 //    qDebug() << "listGeneralInfo = "<<listGeneralInfo.size();
+    if(listGeneralInfo.size() == 0)
+        writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tНе удалось прочитать файл или файл пуст");
 
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tИнициализация популяции...");
     for(int k{0}; k < listGeneralInfo.size(); ++k){
 
 
@@ -395,9 +417,11 @@ void Population::initPopulation()
     }
 
     populationSize = listGeneralInfo.size();
-    //    qDebug() << "listChromosome.size = "<<currentListChromosome.size()<<"\tpopulationSize = "<<populationSize;
 
+    totalMethods = listGeneralInfo.size();
     delete parser;
+
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tПопуляция инициализирована...");
     for(auto ch : currentListChromosome)
         qDebug() << ch->getGens();
 }
@@ -413,6 +437,7 @@ void Population::start(){
 
     //каждый 3 итерации популяция должна обменяться хромосомами с соседней популяцией
     while(numberIteration <= 3 && currentIteration <= totalIterations){
+        writeMessage("\n"+QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tИТЕРАЦИЯ №"+QString::number(currentIteration));
         fitnessCalculation();
         operatorSelection();
         operatorCrossover();
@@ -423,18 +448,50 @@ void Population::start(){
         ++currentIteration;
     }
     qDebug() << "Популяция "<<QString::number(index)<<" готова к обмену хромосомами";
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tПопуляция "+QString::number(index)+" готова к обмену хромосомами");
     numberIteration = 0;
 
-    if(currentIteration > totalIterations)
+    if(currentIteration > totalIterations){
+        checkCoveragedMethods();
         emit signalFinish();
-    else
+    }else
         emit signalReadySwap();
 }
 
+void Population::checkCoveragedMethods(){
+    QMap<QString, int> map;
+    for(auto ch : currentListChromosome){
+        QString clName = ch->getClassInfo().getName();
+        QString mdName = ch->getMethod().getName();
+        int mdArgs = ch->getClassInfo().getFields().size();
+
+        QString method{""};
+        QString obj{""};
+
+        if(!clName.isEmpty())
+            obj = clName+".";
+
+        method = obj+mdName+"-"+QString::number(mdArgs);
+
+        if(!map.contains(method))
+            map.insert(method, 1);
+
+        else
+            map[method]++;
+    }
+    qDebug() << "map.size = " << map.size();
+    qDebug() << map;
+
+    qDebug() << totalMethods;
+    emit signalCoveragedMethods(map.size());
+    emit signalTotalMethods(totalMethods);
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tПокрытых методов: "+ QString::number(map.size()));
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tВсего методов: "+ QString::number(map.size()));
+}
 
 void Population::printChromosome(){
     qDebug() << "\nНАЧИНАЮ ПЕЧАТАТЬ ХРОМОСОМЫ";
-//    writeMessage("НАЧИНАЮ ПЕЧАТАТЬ ХРОМОСОМЫ");
+//    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"НАЧИНАЮ ПЕЧАТАТЬ ХРОМОСОМЫ");
     qDebug() <<"\nКоличество хромосом = "<<currentListChromosome.size();
     for(int i{0}; i < currentListChromosome.size(); ++i)
         qDebug() << currentListChromosome[i]->getGens();
@@ -442,12 +499,14 @@ void Population::printChromosome(){
 
 void Population::receiveChromosomes(QList<AbstractChromosome *> list)
 {
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tПолучение особей от другой популяции");
     for(auto ch : list)
         currentListChromosome.append(ch);
 }
 
 QList<AbstractChromosome *> Population::sendChromosomes(const int count)
 {
+    writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tОтправление особей другой популяции");
     srand(time(0));
     QList<AbstractChromosome *> list;
     for(int i{0}; i < count; ++i){

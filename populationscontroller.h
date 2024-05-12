@@ -18,7 +18,7 @@ public:
      * \param Количество итераций в алгоритме
      * \param parent Родитель
      */
-    explicit PopulationsController(int total, QObject *parent = nullptr);
+    explicit PopulationsController(QObject *parent = nullptr);
 
     /*!
      * \brief Деструктор класса
@@ -55,6 +55,8 @@ public:
      */
     void setProbCrossover(float cross) { this->probCross = cross; }
 
+    void setTotalIter(int total) { this->totalIterations = total; }
+
     /*!
      * \brief Добавить популяцию
      * \param pop Популция
@@ -70,6 +72,11 @@ public:
      * \brief Инициализация популяций и запуск
      */
     void initPopulation();
+
+    /*!
+     * \brief Удалить все популяции
+     */
+    void deletePopulations();
 
 signals:
     /*!
@@ -89,6 +96,22 @@ signals:
      */
     void signalWrite(int index, const QString& message);
 
+    /*!
+     * \brief Сигнал об общем времени выполнении
+     * \param time Время
+     */
+    void signalTimeElapsed(int& time);
+
+    /*!
+     * \brief Сигнал об обмене хромосомами между популяциями
+     */
+    void signalIteration();
+
+    /*!
+     * \brief Сигнал о заверешнии выполнения алгоритма
+     */
+    void signalFinish(int coveraged, int total);
+
 public slots:
     /*!
      * \brief Слот для окончания алгоритма. Собираем хромосомы со всех популяций и оформляем их в тест-кейсы
@@ -106,6 +129,12 @@ public slots:
      * \param message Текст сообщения
      */
     void slotWriteMessage(int index, const QString& message);
+
+private slots:
+
+    void slotTotalMethods(int total);
+
+    void slotCoveragedMethods(int coveraged);
 private:
     /*!
      * \brief Обменяться хромосомами
@@ -150,12 +179,12 @@ private:
     /*!
      * \brief Общее количество итераций алгоритма
      */
-    const int totalIterations;
+    mutable int totalIterations;
 
     /*!
      * \brief Таймер
      */
-    QTime timer;
+    QTime* timer;
 
     /*!
      * \brief Вероятность мутации
@@ -171,6 +200,10 @@ private:
      * \brief Порядковый номер
      */
     int index;
+
+    int totalsMethods;
+
+    int coveragedMethods;
 
 };
 

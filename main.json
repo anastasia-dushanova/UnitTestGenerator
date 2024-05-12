@@ -73,5 +73,82 @@
     },
     "global_fields": [],
     "other_classes": ["other1"]
+},
+{
+    "class": {
+        "fields": ["field1"],
+        "methods": [{
+            "args": ["arg_1"],
+            "linesCount": 123,
+            "name": "method_1g1",
+            "retVal": true
+        }, {
+            "args": ["arg_1", "arg_2"],
+            "linesCount": 123,
+            "name": "method_1g2",
+            "retVal": true
+        },{
+            "args": [],
+            "linesCount": 123,
+            "name": "method_1g3",
+            "retVal": false
+        }],
+        "name": "1"
+    },
+    "global_fields": [],
+    "other_classes": []
+},
+{
+    "class": {
+        "fields": ["field1"],
+        "methods": [{
+            "args": ["arg_1"],
+            "linesCount": 123,
+            "name": "method_411",
+            "retVal": false
+        }, {
+            "args": ["arg_1", "arg_2"],
+            "linesCount": 123,
+            "name": "method_142",
+            "retVal": true
+        },{
+            "args": ["arg_1", "arg_2", "arg_3"],
+            "linesCount": 123,
+            "name": "method_134",
+            "retVal": false
+        }],
+        "name": "class_24"
+    },
+    "global_fields": ["gl_f_1"],
+    "other_classes": ["other1"]
+},
+{
+    "class": {
+        "fields": ["field1"],
+        "methods": [{
+            "args": ["arg_1"],
+            "linesCount": 123,
+            "name": "method_11",
+            "retVal": false
+        }, {
+            "args": ["arg_1", "arg_2"],
+            "linesCount": 123,
+            "name": "method_12",
+            "retVal": false
+        },{
+            "args": ["arg_1", "arg_2", "arg_3"],
+            "linesCount": 123,
+            "name": "method_13",
+            "retVal": false
+        },{
+            "args": [],
+            "linesCount": 123,
+            "name": "method_13",
+            "retVal": true
+        }],
+        "name": ""
+    },
+    "global_fields": ["gl_f_1", "gl_f_2"],
+    "other_classes": []
 }
 ]

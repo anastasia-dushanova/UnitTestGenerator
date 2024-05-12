@@ -8,6 +8,28 @@ UnitTestGenerator::UnitTestGenerator(QWidget *parent)
     ui->setupUi(this);
 
     ui->treeView_files->setHeaderHidden(true);
+
+//    totalIterations = 0;
+
+    listFiles = new QStringList();
+
+    controller = new PopulationsController();
+
+    connect(controller, SIGNAL(signalWrite(int,const QString&)), this, SLOT(slotWriteMessage(int,const QString&)));
+    connect(controller, SIGNAL(signalTimeElapsed(int&)), this, SLOT(slotTimeElapsed(int&)));
+    connect(controller, SIGNAL(signalIteration()), this, SLOT(slotIterations()));
+    connect(controller, SIGNAL(signalFinish(int, int)), this, SLOT(slotFinish(int, int)));
+
+    QFont font;
+    font.setStyleHint(QFont::Times);
+    ui->plainTextEdit_show->setFont(font);
+
+    process = new QProcess(this);
+
+//    connect(process, SIGNAL(readyReadStandardOutput()), this, SLOT(slotReadPythonAnalys()));
+    connect(process, SIGNAL(readyReadStandardError()), this, SLOT(slotReadPythonAnalys()));
+
+    ui->pushButton_show->setEnabled(false);
 }
 
 
@@ -21,22 +43,27 @@ void UnitTestGenerator::slotWriteMessage(int index, const QString& message){
     switch (index) {
     case 1:{
         ui->plainTextEdit_1->setPlainText(ui->plainTextEdit_1->toPlainText()+"\n"+message);
+        ui->plainTextEdit_1->verticalScrollBar()->setValue(ui->plainTextEdit_1->verticalScrollBar()->maximum());
         break;
     }
     case 2:{
         ui->plainTextEdit_2->setPlainText(ui->plainTextEdit_2->toPlainText()+"\n"+message);
+        ui->plainTextEdit_2->verticalScrollBar()->setValue(ui->plainTextEdit_2->verticalScrollBar()->maximum());
         break;
     }
     case 3:{
         ui->plainTextEdit_3->setPlainText(ui->plainTextEdit_3->toPlainText()+"\n"+message);
+        ui->plainTextEdit_3->verticalScrollBar()->setValue(ui->plainTextEdit_3->verticalScrollBar()->maximum());
         break;
     }
     case 4:{
         ui->plainTextEdit_4->setPlainText(ui->plainTextEdit_4->toPlainText()+"\n"+message);
+        ui->plainTextEdit_4->verticalScrollBar()->setValue(ui->plainTextEdit_4->verticalScrollBar()->maximum());
         break;
     }
     case 5:{
         ui->plainTextEdit_main->setPlainText(ui->plainTextEdit_main->toPlainText()+"\n"+message);
+        ui->plainTextEdit_main->verticalScrollBar()->setValue(ui->plainTextEdit_main->verticalScrollBar()->maximum());
         break;
     }
     default:{
@@ -46,6 +73,36 @@ void UnitTestGenerator::slotWriteMessage(int index, const QString& message){
     }
 }
 
+void UnitTestGenerator::slotTimeElapsed(int &time)
+{
+    ui->label_totalTimeValue->clear();
+    ui->label_totalTimeValue->setText(QString::number(time) + " мс");
+}
+
+void UnitTestGenerator::slotIterations()
+{
+    ui->progressBar->setValue(ui->progressBar->value()+4);
+}
+
+void UnitTestGenerator::slotFinish(int coveraged, int total)
+{
+//    ui->progressBar->setValue(ui->progressBar->maximum());
+
+    ui->label_statusValue->setStyleSheet("color: rgb(0, 255, 0)");
+    ui->label_statusValue->setText("Готово");
+
+
+    float cover = ((float)coveraged/(float)total);
+    qDebug() << "покрытие "<<cover;
+
+    ui->label_coverageValue->clear();
+    ui->label_coverageValue->setText(QString::number(cover, 'f', 2));
+
+    ui->pushButton_show->setEnabled(true);
+
+    //TODO удалить все популяции
+    controller->deletePopulations();
+}
 
 void UnitTestGenerator::on_toolButton_addFile_clicked()
 {
@@ -71,16 +128,12 @@ void UnitTestGenerator::on_toolButton_addFile_clicked()
 
     ui->treeView_files->setModel(model);
 
-
-    for(int row{0}; row < model->rowCount(); ++row){
-        qDebug() << model->item(row)->data().toString();
-    }
 }
 
 
 void UnitTestGenerator::on_toolButton_addFol_clicked()
 {
-    QString d = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+    QString d = QFileDialog::getExistingDirectory(this, tr("Выбирите папку"),
                                                 "",
                                                 QFileDialog::ShowDirsOnly
                                                 | QFileDialog::DontResolveSymlinks);
@@ -104,29 +157,54 @@ void UnitTestGenerator::on_toolButton_addFol_clicked()
     parentItem->setIcon(QIcon(":/src/folder.png"));
     parent->appendRow(parentItem);
 
-    QStringList list = dir.entryList(QDir::Files);
+    QStringList list = dir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
     for(auto name : list){
-        QStandardItem* item = new QStandardItem(name);
-        item->setData(d+"/"+name);
-        item->setIcon(QIcon(":/src/file.png"));
-        parentItem->appendRow(item);
+
+        addFolderContent(d+"/"+name, parentItem);
     }
     ui->treeView_files->setModel(model);
 
-    for(int row{0}; row < model->rowCount(); ++row){
-        qDebug() << model->item(row)->data().toString();
+}
+
+void UnitTestGenerator::addFolderContent(QString path, QStandardItem* parent){
+
+    QFileInfo info(path);
+    if(!info.isDir()){
+//        qDebug() <<"file "<<path;
+        QStandardItem* item = new QStandardItem(info.fileName());
+        item->setData(info.filePath());
+        item->setIcon(QIcon(":/src/file.png"));
+        parent->appendRow(item);
+    }else{
+//        qDebug() << "dir "<<path;
+        QDir dir(path);
+        QStandardItem* parentItem = new QStandardItem(dir.dirName());
+        parentItem->setData(path);
+        parentItem->setIcon(QIcon(":/src/folder.png"));
+        parent->appendRow(parentItem);
+        QStringList list = dir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
+        for(auto name : list){
+            addFolderContent(path + "/" + name, parentItem);
+        }
     }
 
 }
 
 void UnitTestGenerator::on_toolButton_deleteFile_clicked()
 {
-    qDebug() << ui->treeView_files->selectionModel()->currentIndex().data().toString();
+    if(ui->treeView_files->model() == nullptr)
+        return;
 
-//    QStandardItemModel* model = static_cast<QStandardItemModel*>(ui->treeView_files->model());
-//    for(int row{0}; row < model->rowCount(); ++row){
-//        qDebug() << model->item(row)->data().toString();
-//    }
+    QItemSelectionModel* model = static_cast<QItemSelectionModel*>(ui->treeView_files->selectionModel());
+    int row = model->currentIndex().row();
+
+    if(row == -1)
+        return;
+
+    QModelIndex parent = model->currentIndex().parent();
+    QStandardItemModel* standard = static_cast<QStandardItemModel*>(ui->treeView_files->model());
+    standard->removeRow(row, parent);
+
 }
 
 void UnitTestGenerator::on_pushButton_clearPop_clicked()
@@ -167,6 +245,14 @@ void UnitTestGenerator::on_pushButton_clearAll_clicked()
     ui->plainTextEdit_2->clear();
     ui->plainTextEdit_3->clear();
     ui->plainTextEdit_4->clear();
+    ui->plainTextEdit_main->clear();
+    ui->plainTextEdit_show->clear();
+
+    if(ui->treeView_files->model() == nullptr)
+        return;
+
+    QStandardItemModel* model = static_cast<QStandardItemModel*>(ui->treeView_files->model());
+    model->clear();
 }
 
 
@@ -190,28 +276,132 @@ void UnitTestGenerator::on_action_exit_triggered()
 
 void UnitTestGenerator::on_action_help_triggered()
 {
-
+//    QMessageBox::information();
 }
 
+void UnitTestGenerator::slotReadPythonAnalys(){
 
-void UnitTestGenerator::on_pushButton_start_clicked()
-{
+    QString output = process->readAllStandardError();
+    qDebug() << "python-анализатор: "<<output;
+    if(output != "all parsed")
+        return;
+
     float probMut = ui->comboBox_probMut->currentText().toFloat();
     float probCross = ui->spinBox_probCross->text().toFloat();
     int iter = ui->lineEdit_iterations->text().toInt();
 
-    //здесь позже будет только Python-анализатор
-    TestCluster* cluster = new TestCluster("main.json");
+    ui->progressBar->setValue(0);
+    ui->progressBar->setMaximum(iter);
+
+    ui->label_statusValue->setStyleSheet("color: rgb(0, 0, 0)");
+    ui->label_statusValue->setText("Выполнение");
+
+    TestCluster* cluster = new TestCluster("/python/sw_templates.json");
     cluster->makeClusters();
 
-    controller = new PopulationsController(iter);
-    controller->setProbMutation(probMut*0.01);
-    controller->setProbCrossover(probCross*0.01);
+//    controller->setTotalIter(iter);
+//    controller->setProbMutation(probMut*0.01);
+//    controller->setProbCrossover(probCross*0.01);
 
-    connect(controller, SIGNAL(signalWrite(int,const QString&)), this, SLOT(slotWriteMessage(int,const QString&)));
+//    controller->checkFiles();
+//    controller->initPopulation();
 
-
-    controller->checkFiles();
-    controller->initPopulation();
+    delete cluster;
 }
 
+void UnitTestGenerator::checkFiles(QStandardItem *parent){
+
+//    qDebug() << parent->hasChildren();
+//    if(!parent->hasChildren()){
+//        qDebug() << "нет детей" << parent->data();
+//        listFiles->append(parent->data().toString());
+//    }
+//    qDebug() << "есть дети "<<parent->data();
+//    checkFiles(parent->child(0));
+
+
+
+    if(parent->hasChildren()){
+        for(auto row{0}; row < parent->rowCount(); ++row){
+            checkFiles(parent->child(row));
+
+        }
+    }else{
+//        qDebug() << parent->data();
+        listFiles->append(parent->data().toString());
+    }
+
+}
+
+void UnitTestGenerator::on_pushButton_start_clicked()
+{
+
+
+    if(ui->treeView_files->model() == nullptr)
+        return;
+
+    QFile file(QApplication::applicationDirPath()+"/python/list_python_code.txt");
+    file.open(QIODevice::WriteOnly|QIODevice::Truncate);
+    file.close();
+
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Append)){
+        qDebug() << "Невозможно открыть файл /python/list_python_code.txt";
+        return;
+    }
+
+    //получаем список файлов с кодом питона
+    QStandardItemModel* model = static_cast<QStandardItemModel*>(ui->treeView_files->model());
+
+
+    for(int row{0}; row < model->rowCount(); ++row){
+        QStandardItem* parent = model->item(row);
+        checkFiles(parent);
+    }
+
+//    qDebug() << listFiles->size();
+//    for(auto l : *listFiles){
+//        qDebug() << l;
+//    }
+
+    QTextStream stream(&file);
+    //нужно оставить файлы только с питоном (.py)
+    for(int i{0}; i < listFiles->size(); ++i){
+//        qDebug() << QString::number(i);
+        QFileInfo info(listFiles->at(i));
+//        qDebug() << "\nlistfiles "<<listFiles->at(i);
+//        qDebug() << "info.name "<<info.filePath();
+//        qDebug() << "info.suffix " <<info.completeSuffix();
+        if(info.completeSuffix() == "py"){
+            //добавляем пути до файлов с кодом в list_python_code.txt
+            stream << info.filePath().toUtf8() << "\n";
+        }
+    }
+
+
+    file.close();
+
+    //здесь позже будет только Python-анализатор
+    QString scriptFile = QCoreApplication::applicationDirPath()+"/python/main.py";
+
+    QStringList pythonCommandArguments = QStringList() << scriptFile;
+
+    qDebug() << "запускаем питон";
+    process->start("python", pythonCommandArguments);
+    process->waitForFinished();
+
+
+    listFiles->clear();
+}
+
+
+void UnitTestGenerator::on_pushButton_show_clicked()
+{
+    ui->plainTextEdit_show->clear();
+    QFile file(QApplication::applicationDirPath()+"/decor.txt");
+    if(file.open(QIODevice::ReadOnly)){
+        QTextStream stream(&file);
+        QString text = stream.readAll();
+        ui->plainTextEdit_show->setPlainText(text);
+    }
+    file.close();
+}

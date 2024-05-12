@@ -1,0 +1,2 @@
+D:/univer/maga/build-UnitTestGenerator-Desktop_Qt_5_12_12_MinGW_64_bit-Debug/debug/python/example.py
+D:/univer/maga/build-UnitTestGenerator-Desktop_Qt_5_12_12_MinGW_64_bit-Debug/debug/python/main.py

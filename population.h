@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <QList>
 #include <QDebug>
+#include <QDateTime>
 #include <chromosome.h>
 #include <methodinfo.h>
 #include <jsonparser.h>
@@ -101,6 +102,10 @@ signals:
      */
     void signalWriteMessage(int index, const QString& message);
 
+    void signalTotalMethods(int total);
+
+    void signalCoveragedMethods(int coveraged);
+
 private:
 
     /*!
@@ -141,7 +146,7 @@ private:
     /*!
      * \brief Список информации о классе и методах
      */
-    QList<GeneralInfo*> listGeneralInfo;
+//    QList<GeneralInfo*> listGeneralInfo;
 
     /*!
      * \brief Среднее значение функции пригодности в популяции
@@ -179,6 +184,8 @@ private:
      *          функция приспособленности не будет сильно меняться, то будет остановка работы
      */
     QList<float> fitnessFunction;
+
+    int totalMethods;
 
     /*!
      * \brief Сгенерировать случайное целочисленное число в диапозоне [min, max]
@@ -278,6 +285,9 @@ private:
      */
     void printChromosome();
 
+//    void checkTotalMethods();
+
+    void checkCoveragedMethods();
 
 };
 

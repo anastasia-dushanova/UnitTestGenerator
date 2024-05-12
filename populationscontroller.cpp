@@ -1,17 +1,17 @@
 #include "populationscontroller.h"
 
-PopulationsController::PopulationsController(int total, QObject *parent)
+PopulationsController::PopulationsController(QObject *parent)
     : QObject(parent),
       populationsReady(0),
       populationsFinished(0),
       countSwap(0),
-      totalIterations(total),
-      index(5){
+      index(5),
+      totalsMethods(0),
+      coveragedMethods(0){
 
     for(int i{0}; i < 4; ++i)
         listFileNames.insert(QString::number(i+1)+"_text.json", false);
 
-    connect(this, SIGNAL(signalWrite(int,QString)), SLOT(slotWriteMessage(int,QString)));
 }
 
 PopulationsController::~PopulationsController(){
@@ -27,13 +27,30 @@ PopulationsController::~PopulationsController(){
     delete decor;
 }
 
+void PopulationsController::deletePopulations(){
+
+    for(int i{0}; i < listPopulation.size(); ++i){
+        Population* pop = listPopulation.at(i);
+        delete pop;
+    }
+
+    listPopulation.clear();
+
+    for(int i{0}; i < listThreads.size(); ++i){
+        listThreads.at(i)->quit();
+        listThreads.at(i)->wait();
+    }
+
+}
+
 void PopulationsController::initPopulation(){
 
     qDebug() << "КОЛИЧЕСТВО ПОПУЛЯЦИЙ = "<<listPopulation.size();
-//    emit signalWrite(5, "КОЛИЧЕСТВО ПОПУЛЯЦИЙ = ");
+    emit signalWrite(index, QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tКоличество популяций = "+QString::number(listPopulation.size()));
 
     if(listPopulation.size() == 0){
         qDebug() << "КОЛИЧЕСТВО ПОПУЛЯЦИЙ = 0";
+        emit signalWrite(index, QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tКоличество популяций = 0");
         return;
     }
 
@@ -48,17 +65,39 @@ void PopulationsController::initPopulation(){
         connect(this, SIGNAL(signalStart()), listPopulation.at(i), SLOT(start()));
         connect(this, SIGNAL(signalContinue()), listPopulation.at(i), SLOT(start()));
         connect(listPopulation.at(i), SIGNAL(signalWriteMessage(int,const QString&)), this, SLOT(slotWriteMessage(int,const QString&)));
+        connect(listPopulation.at(i), SIGNAL(signalTotalMethods(int)), this, SLOT(slotTotalMethods(int)));
+        connect(listPopulation.at(i), SIGNAL(signalCoveragedMethods(int)), this, SLOT(slotCoveragedMethods(int)));
 
         thread->start();
     }
 
     emit signalStart();
-    timer.start();
+
+    if(timer == nullptr){
+        timer = new QTime();
+        timer->start();
+        qDebug() << "таймер "<<timer;
+    }else{
+        delete timer;
+        timer = new QTime();
+        timer->start();
+        qDebug() << "delete таймер "<<timer;
+    }
 
 }
 
 void PopulationsController::slotWriteMessage(int index, const QString& message){
     emit signalWrite(index, message);
+}
+
+void PopulationsController::slotTotalMethods(int total){
+
+    totalsMethods += total;
+}
+
+void PopulationsController::slotCoveragedMethods(int coveraged){
+
+    coveragedMethods += coveraged;
 }
 
 void PopulationsController::checkFiles(){
@@ -89,10 +128,12 @@ void PopulationsController::slotCheckCount(){
     if(populationsReady == listPopulation.size()){
         ++countSwap;
         qDebug() << "ВСЕ ПОПУЛЯЦИИ ГОТОВЫ К ОБМЕНУ ХРОМОСОМАМИ. НОМЕР ОБМЕНА "<<QString::number(countSwap);
-
+        emit signalWrite(index, "\n"+QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tВсе популяции готовы к обмену хромосомами. Номер обмена "+QString::number(countSwap));
         swapChromosoms();
 
         populationsReady = 0;
+
+        emit signalIteration();
     }
 }
 
@@ -101,6 +142,7 @@ void PopulationsController::swapChromosoms(){
     if(listPopulation.size() == 1){
         qDebug() << "КОЛИЧЕСТВО ПОПУЛЯЦИЙ - 1. ОБМЕНА НЕ ПРОИСХОДИТ";
         qDebug() << "ПРОДОЛЖАЕМ АЛГОРИТМ";
+        emit signalWrite(index, QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tКоличество популяций: 1. Обмена не происходит. Алгоритм продолжается.");
         emit signalContinue();
         return;
     }
@@ -116,27 +158,42 @@ void PopulationsController::swapChromosoms(){
     }
 
     qDebug() << "Популяции обменялись особями\nПродолжаем...";
+    emit signalWrite(index, QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tПопуляции обменялись особями. Алгоритм продолжается.");
     emit signalContinue();
 }
 
 void PopulationsController::slotFinish(){
-
-    //TODO установить таймеры
-
     populationsFinished++;
     if(populationsFinished == listPopulation.size()){
         qDebug() << "\nГОТОВО. ВСЕ ПОПУЛЯЦИИ ЗАВЕРШИЛИ СВОИ ОПЕРАЦИИ\nБыло выполнено обменов: "<<QString::number(countSwap);
+        emit signalWrite(index, "\n"+QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tГотово. Все популяции завершили свои операции.Было выполнено обменов: "+QString::number(countSwap));
 
         populationsFinished = 0;
+
+
+        int time{timer->elapsed()};
+        qDebug() << "finish таймер "<<timer;
+        qDebug("Прошло времени: %d мс", time);
+        emit signalWrite(index,  QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tПрошло времени: " + QString::number(time) + " мс");
+        emit signalTimeElapsed(time);
+        emit signalFinish(coveragedMethods, totalsMethods);
+        emit signalWrite(index, QDateTime::currentDateTime().time().toString("hh:mm:ss")
+                         +"\tВсего покрытых методов: "
+                         + QString::number(coveragedMethods)
+                         +"\tВсего методов: "
+                         + QString::number(totalsMethods));
+
+        totalsMethods = 0;
+        coveragedMethods = 0;
+        countSwap = 0;
+
+        decor = new TestCaseDecor("decor.txt");
+
+        for(auto p : listPopulation)
+            decor->appendToListTestCase(p->getCurrentList());
+
+        decor->decor();
+
     }
-
-    qDebug("Прошло времени: %d мс", timer.elapsed());
-
-    decor = new TestCaseDecor("decor.txt");
-
-    for(auto p : listPopulation)
-        decor->appendToListTestCase(p->getCurrentList());
-
-    decor->decor();
 
 }

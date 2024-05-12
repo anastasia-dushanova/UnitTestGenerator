@@ -9,5 +9,8 @@
         <file>folder.png</file>
         <file>open_folder.png</file>
         <file>file.png</file>
+        <file>cover.png</file>
+        <file>status.png</file>
+        <file>time.png</file>
     </qresource>
 </RCC>
