@@ -184,7 +184,7 @@ private:
     /*!
      * \brief Таймер
      */
-    QTime* timer;
+    QTime timer;
 
     /*!
      * \brief Вероятность мутации

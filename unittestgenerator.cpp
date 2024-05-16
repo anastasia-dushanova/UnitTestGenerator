@@ -29,9 +29,30 @@ UnitTestGenerator::UnitTestGenerator(QWidget *parent)
 //    connect(process, SIGNAL(readyReadStandardOutput()), this, SLOT(slotReadPythonAnalys()));
     connect(process, SIGNAL(readyReadStandardError()), this, SLOT(slotReadPythonAnalys()));
 
-    ui->pushButton_show->setEnabled(false);
+    setAllButtonsEnabled(false);
 
 
+}
+
+void UnitTestGenerator::setAllButtonsEnabled(bool b){
+    QString enable{""};
+    ui->pushButton_show->setEnabled(b);
+    ui->pushButton_edit->setEnabled(b);
+    ui->pushButton_edit->setEnabled(b);
+    ui->pushButton_start->setEnabled(b);
+    ui->pushButton_save->setEnabled(b);
+
+    if(b)
+        enable = "background-color: #0094F5; border 1px solid #0d6efd";
+    else
+        enable = "background-color: #c1e6fe; border 1px solid #00d0f0";
+
+
+    ui->pushButton_show->setStyleSheet(enable);
+    ui->pushButton_edit->setStyleSheet(enable);
+    ui->pushButton_edit->setStyleSheet(enable);
+    ui->pushButton_start->setStyleSheet(enable);
+    ui->pushButton_save->setStyleSheet(enable);
 }
 
 
@@ -95,7 +116,7 @@ void UnitTestGenerator::slotFinish(int coveraged, int total)
 {
 //    ui->progressBar->setValue(ui->progressBar->maximum());
 
-    ui->label_statusValue->setStyleSheet("color: rgb(0, 255, 0)");
+    ui->label_statusValue->setStyleSheet("color: #008131");
     ui->label_statusValue->setText("Готово");
 
 
@@ -109,13 +130,17 @@ void UnitTestGenerator::slotFinish(int coveraged, int total)
 
     //TODO удалить все популяции
     controller->deletePopulations();
+    qDebug() << "pass1";
+//    setAllButtonsEnabled(true);
+    ui->pushButton_show->setEnabled(true);
+    ui->pushButton_show->setStyleSheet("background-color: #0094F5; border 1px solid #0d6efd");
 }
 
 void UnitTestGenerator::on_toolButton_addFile_clicked()
 {
-    QStringList listFiles = QFileDialog::getOpenFileNames(this, "Выбирите файл", "", "");
+    QStringList listFile = QFileDialog::getOpenFileNames(this, "Выбирите файл", "", "");
 
-    if(listFiles.isEmpty())
+    if(listFile.isEmpty())
         return;
 
     QStandardItemModel* model;
@@ -126,7 +151,7 @@ void UnitTestGenerator::on_toolButton_addFile_clicked()
 
     QStandardItem* parentItem = model->invisibleRootItem();
 
-    for(auto l : listFiles){
+    for(auto l : listFile){
         QStandardItem* item = new QStandardItem(QFileInfo(l).fileName());
         item->setData(l);
         item->setIcon(QIcon(":/src/file.png"));
@@ -135,6 +160,8 @@ void UnitTestGenerator::on_toolButton_addFile_clicked()
 
     ui->treeView_files->setModel(model);
 
+    ui->pushButton_start->setEnabled(true);
+    ui->pushButton_start->setStyleSheet("background-color: #0094F5; border 1px solid #0d6efd");
 }
 
 
@@ -170,6 +197,9 @@ void UnitTestGenerator::on_toolButton_addFol_clicked()
         addFolderContent(d+"/"+name, parentItem);
     }
     ui->treeView_files->setModel(model);
+
+    ui->pushButton_start->setEnabled(true);
+    ui->pushButton_start->setStyleSheet("background-color: #0094F5; border 1px solid #0d6efd");
 
 }
 
@@ -260,6 +290,13 @@ void UnitTestGenerator::on_pushButton_clearAll_clicked()
 
     QStandardItemModel* model = static_cast<QStandardItemModel*>(ui->treeView_files->model());
     model->clear();
+
+    ui->label_coverageValue->setText("");
+    ui->label_statusValue->setText("");
+    ui->label_totalTimeValue->setText("");
+    ui->progressBar->setValue(0);
+
+    setAllButtonsEnabled(false);
 }
 
 
@@ -306,7 +343,8 @@ void UnitTestGenerator::slotReadPythonAnalys(){
     ui->label_statusValue->setStyleSheet("color: rgb(0, 0, 0)");
     ui->label_statusValue->setText("Выполнение");
 
-    TestCluster* cluster = new TestCluster("/python/sw_templates.json");
+    TestCluster* cluster = new TestCluster("python/sw_templates.json");
+//    TestCluster* cluster = new TestCluster("main.json");
     cluster->makeClusters();
 
     controller->setTotalIter(iter);
@@ -347,7 +385,7 @@ void UnitTestGenerator::on_pushButton_start_clicked()
         return;
 
     ui->plainTextEdit_main->textCursor().movePosition(QTextCursor::End);
-    ui->plainTextEdit_main->insertPlainText(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tЗапускается Python-анализатор\n");
+    ui->plainTextEdit_main->insertPlainText(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tЗапускается Python-анализатор...\n");
 
     QFile file(QApplication::applicationDirPath()+"/python/list_python_code.txt");
     file.open(QIODevice::WriteOnly|QIODevice::Truncate);
@@ -384,6 +422,9 @@ void UnitTestGenerator::on_pushButton_start_clicked()
 
     file.close();
 
+//    float probMut = ui->comboBox_probMut->currentText().toFloat();
+//    float probCross = ui->spinBox_probCross->text().toFloat();
+//    int iter = ui->lineEdit_iterations->text().toInt();
     //здесь позже будет только Python-анализатор
     QString scriptFile = QCoreApplication::applicationDirPath()+"/python/main.py";
 
@@ -394,7 +435,18 @@ void UnitTestGenerator::on_pushButton_start_clicked()
     process->waitForFinished();
 
 
-    listFiles->clear();
+//    listFiles->clear();
+//    TestCluster* cluster = new TestCluster("main.json");
+//    cluster->makeClusters();
+
+//    controller->setTotalIter(iter);
+//    controller->setProbMutation(probMut*0.01);
+//    controller->setProbCrossover(probCross*0.01);
+
+//    controller->checkFiles();
+//    controller->initPopulation();
+
+//    delete cluster;
 }
 
 
@@ -408,4 +460,39 @@ void UnitTestGenerator::on_pushButton_show_clicked()
         ui->plainTextEdit_show->setPlainText(text);
     }
     file.close();
+
+    ui->pushButton_edit->setEnabled(true);
+    ui->pushButton_save->setEnabled(true);
+    ui->pushButton_edit->setStyleSheet("background-color: #0094F5; border 1px solid #0d6efd");
+    ui->pushButton_save->setStyleSheet("background-color: #0094F5; border 1px solid #0d6efd");
 }
+
+void UnitTestGenerator::on_pushButton_edit_clicked()
+{
+    ui->plainTextEdit_show->setReadOnly(false);
+    ui->plainTextEdit_show->setStyleSheet("background-color: #fff");
+}
+
+
+void UnitTestGenerator::on_pushButton_save_clicked()
+{
+    QString filePath = QFileDialog::getSaveFileName(this,
+                                 "Выбирите файл для сохранения",
+                                 "");
+
+    if(filePath.isEmpty())
+        return;
+
+    QFile file(filePath);
+    file.open(QIODevice::WriteOnly|QIODevice::Truncate);
+    file.close();
+    if(!file.open(QIODevice::WriteOnly)){
+        QMessageBox::warning(this, "Внимание", "Невозможно открыть файл для сохранения");
+        return;
+    }
+    QTextStream stream(&file);
+    stream << ui->plainTextEdit_show->toPlainText();
+    file.close();
+    QMessageBox::information(this, "Файл сохранен", "Готово. Файл успешно сохранен");
+}
+

@@ -128,6 +128,10 @@ private slots:
      */
     void on_pushButton_show_clicked();
 
+    void on_pushButton_edit_clicked();
+
+    void on_pushButton_save_clicked();
+
 private:
 
     /*!
@@ -142,6 +146,8 @@ private:
      * \param parent Родитель (каталог)
      */
     void addFolderContent(QString path, QStandardItem* parent);
+
+    void setAllButtonsEnabled(bool b);
 
     Ui::UnitTestGenerator *ui;
 

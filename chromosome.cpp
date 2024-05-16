@@ -572,7 +572,7 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
 
                 for(int i{0}; i < getMethod().getArgs().size(); ++i){
                     int ind = 1 + rand()%allArgs.size()-1;
-                    listArgs += allArgs.takeAt(ind);
+                    listArgs += allArgs.takeAt(ind)+",";
                 }
                 listArgs.chop(1);
                 int type = 1+rand()%4;
@@ -598,7 +598,7 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                 }else{
                     for(int i{0}; i < getMethod().getArgs().size(); ++i){
                         int ind = 1 + rand()%allArgs.size()-1;
-                        listArgs += allArgs.takeAt(ind);
+                        listArgs += allArgs.takeAt(ind)+",";
                     }
                     listArgs.chop(1);
                     int type = 1+rand()%4;
@@ -755,7 +755,7 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
 
                     for(int i{0}; i < getMethod().getArgs().size(); ++i){
                         int ind = 1 + rand()%allArgs.size()-1;
-                        listArgs += allArgs.takeAt(ind);
+                        listArgs += allArgs.takeAt(ind) + ",";
                     }
                     listArgs.chop(1);
                     int type = 1+rand()%4;
@@ -775,7 +775,7 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
 
                         for(int i{0}; i < getMethod().getArgs().size(); ++i){
                             int ind = 1 + rand()%allArgs.size()-1;
-                            listArgs += allArgs.takeAt(ind);
+                            listArgs += allArgs.takeAt(ind)+",";
                         }
                         listArgs.chop(1);
                         int type = 1+rand()%4;
@@ -787,7 +787,7 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                     }else{
                         for(int i{0}; i < getMethod().getArgs().size(); ++i){
                             int ind = 1 + rand()%allArgs.size()-1;
-                            listArgs += allArgs.takeAt(ind);
+                            listArgs += allArgs.takeAt(ind)+",";
                         }
                         listArgs.chop(1);
                         int type = 1+rand()%4;
@@ -822,7 +822,7 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
 
                     for(int i{0}; i < getMethod().getArgs().size(); ++i){
                         int ind = 1 + rand()%allArgs.size()-1;
-                        listArgs += allArgs.takeAt(ind);
+                        listArgs += allArgs.takeAt(ind)+",";
                     }
                     listArgs.chop(1);
                     //Ожидаемое значение
@@ -853,7 +853,7 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                         }
                         for(int i{0}; i < getMethod().getArgs().size(); ++i){
                             int ind = 1 + rand()%allArgs.size()-1;
-                            listArgs += allArgs.takeAt(ind);
+                            listArgs += allArgs.takeAt(ind)+",";
                         }
                         listArgs.chop(1);
                         int type = 1+rand()%4;
@@ -865,7 +865,7 @@ void ChromosomeNonReturningFunc::setChromosome(ClassInfo classInfo, Method metho
                     }else{
                         for(int i{0}; i < getMethod().getArgs().size(); ++i){
                             int ind = 1 + rand()%allArgs.size()-1;
-                            listArgs += allArgs.takeAt(ind);
+                            listArgs += allArgs.takeAt(ind)+",";
                         }
                         listArgs.chop(1);
                         int type = 1+rand()%4;

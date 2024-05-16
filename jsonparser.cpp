@@ -95,7 +95,7 @@ QList<GeneralInfo *> JSONparser::parseJSONPopulation()
 
 void JSONparser::parseJSONCluster()
 {
-
+    qDebug() << QApplication::applicationDirPath()+"/"+fileName;
     QFile file(QApplication::applicationDirPath()+"/"+fileName);
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
         qDebug() << "JSONparser::parseJSONCluster\tНе удается открыть файл "<<fileName;

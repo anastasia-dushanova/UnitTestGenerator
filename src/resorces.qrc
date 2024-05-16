@@ -13,5 +13,7 @@
         <file>status.png</file>
         <file>time.png</file>
         <file>generator.png</file>
+        <file>edit.png</file>
+        <file>save.png</file>
     </qresource>
 </RCC>

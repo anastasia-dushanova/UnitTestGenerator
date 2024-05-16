@@ -46,10 +46,10 @@ Population::~Population(){
     }
 
 
-    for(int i{0}; i < tempListChromosome.size(); ++i){
-        AbstractChromosome* abs = tempListChromosome.at(i);
-        delete abs;
-    }
+//    for(int i{0}; i < tempListChromosome.size(); ++i){
+//        AbstractChromosome* abs = tempListChromosome.at(i);
+//        delete abs;
+//    }
     currentListChromosome.clear();
     tempListChromosome.clear();
 }
@@ -356,6 +356,7 @@ void Population::operatorReduction()
 
     newListChromosome.clear();
     writeMessage(QDateTime::currentDateTime().time().toString("hh:mm:ss")+"\tКонец работы оператора отбора родителей в новую популяцию");
+    qDebug() << "КОНЕЦ РАБОТЫ ОПЕРАТОРА ОТБОРА РОДИТЕЛЕЙ В НОВУЮ ПОПУЛЯЦИЮ";
 }
 
 void Population::fitnessCalculation()
@@ -456,6 +457,8 @@ void Population::start(){
         emit signalFinish();
     }else
         emit signalReadySwap();
+
+    qDebug()<<"passsss";
 }
 
 void Population::checkCoveragedMethods(){

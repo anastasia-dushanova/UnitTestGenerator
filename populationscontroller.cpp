@@ -29,11 +29,12 @@ PopulationsController::~PopulationsController(){
 
 void PopulationsController::deletePopulations(){
 
+    qDebug() << "pass1";
     for(int i{0}; i < listPopulation.size(); ++i){
         Population* pop = listPopulation.at(i);
         delete pop;
     }
-
+    qDebug() << "pass2";
     listPopulation.clear();
 
     for(int i{0}; i < listThreads.size(); ++i){
@@ -73,16 +74,17 @@ void PopulationsController::initPopulation(){
 
     emit signalStart();
 
-    if(timer == nullptr){
-        timer = new QTime();
-        timer->start();
-        qDebug() << "таймер "<<timer;
-    }else{
-        delete timer;
-        timer = new QTime();
-        timer->start();
-        qDebug() << "delete таймер "<<timer;
-    }
+//    if(timer == nullptr){
+//        timer = new QTime();
+//        timer->start();
+//        qDebug() << "таймер "<<timer;
+//    }else{
+//        delete timer;
+//        timer = new QTime();
+//        timer->start();
+//        qDebug() << "delete таймер "<<timer;
+//    }
+    timer.start();
 
 }
 
@@ -125,6 +127,7 @@ void PopulationsController::checkFiles(){
 
 void PopulationsController::slotCheckCount(){
     populationsReady++;
+    qDebug() << "популяций "<<populationsReady<<" готово к обмену";
     if(populationsReady == listPopulation.size()){
         ++countSwap;
         qDebug() << "ВСЕ ПОПУЛЯЦИИ ГОТОВЫ К ОБМЕНУ ХРОМОСОМАМИ. НОМЕР ОБМЕНА "<<QString::number(countSwap);
@@ -171,7 +174,7 @@ void PopulationsController::slotFinish(){
         populationsFinished = 0;
 
 
-        int time{timer->elapsed()};
+        int time{timer.elapsed()};
         qDebug() << "finish таймер "<<timer;
         qDebug("Прошло времени: %d мс", time);
         decor = new TestCaseDecor("decor.txt");
