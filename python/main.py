@@ -294,7 +294,9 @@ def make_class_w_global(module) -> list:
 with open(os.getcwd()+"/debug/python/list_python_code.txt", 'r') as files:
    list_files = files.readlines()
 
-   list_files.pop()
+   # list_files.pop()
+   # pprint(list_files)
+   list_json = []
    for file in list_files:
       file_name = file.replace("\n", "")
       # pprint(file)
@@ -326,7 +328,7 @@ with open(os.getcwd()+"/debug/python/list_python_code.txt", 'r') as files:
 
       list_info.append(list_global_func)
 
-      list_json = []
+
 
       for info in list_info:
 
@@ -350,8 +352,8 @@ with open(os.getcwd()+"/debug/python/list_python_code.txt", 'r') as files:
 
          list_json.append(to_json)
 
-      with open('sw_templates.json', 'w') as f:
-         json.dump(list_json, f, sort_keys=True, indent=2)
+   with open(os.getcwd()+'/debug/python/sw_templates.json', 'w') as f:
+      json.dump(list_json, f, sort_keys=True, indent=2)
 
 # to_json = {'trunk': trunk_template, 'access': access_template}
 # with open('sw_templates.json') as f:
